@@ -22,6 +22,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Safety", method = () => SetCategory("Safety Mods"), mode = ButtonMode.Action, toolTip = "Opens the safety mods." },
                 new() { buttonText = "Visual", method = () => SetCategory("Visual Mods"), mode = ButtonMode.Action, toolTip = "Opens the visual mods." },
                 new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, toolTip = "Opens the player mods." },
+                new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, toolTip = "Opens the player mods." },
                 new() { buttonText = "Important", method = () => SetCategory("Important Mods"), mode = ButtonMode.Action, toolTip = "Opens the important mods." },
             ];
 
@@ -57,7 +58,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Exit Movement Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, toolTip = "Returns to the main settings page." },
                 new() { buttonText = "Change Fly Speed", overlapText = $"Change Fly Speed [{Mods.Settings.Movement.flySpeedNames[Mods.Settings.Movement.flySpeedIndex]}]", incrementMethod = Mods.Settings.Movement.ChangeFlySpeed, mode = ButtonMode.Incremental, toolTip = "Changes the fly speed." },
                 new() { buttonText = "Change Arm Length", overlapText = $"Change Arm Length [{Mods.Settings.Movement.armLengthNames[Mods.Settings.Movement.armLengthIndex]}]", incrementMethod = Mods.Settings.Movement.ChangeArmLength, mode = ButtonMode.Incremental, toolTip = "Changes the length of your arms." },
-                new() { buttonText = "Change Speed Boost Amount", overlapText = $"Change Speed Boost Amount {Mods.Settings.Movement.speedNames[Mods.Settings.Movement.speedAmountIndex]}", incrementMethod = Mods.Settings.Movement.ChangeSpeedBoostAmount, mode = ButtonMode.Incremental, toolTip = "Changes the amount of your speed boost." },
+                new() { buttonText = "Change Speed Boost Amount", overlapText = $"Change Speed Boost Amount [{Mods.Settings.Movement.speedNames[Mods.Settings.Movement.speedAmountIndex]}]", incrementMethod = Mods.Settings.Movement.ChangeSpeedBoostAmount, mode = ButtonMode.Incremental, toolTip = "Changes the amount of your speed boost." },
                 new() { buttonText = "Grip Speed Boost", enableMethod = () => gripSpeedBoost = true, disableMethod = () => gripSpeedBoost = false, mode = ButtonMode.Toggle, toolTip = "Binds the speed boost mod to your grip." },
                 new() { buttonText = "Trigger Speed Boost", enableMethod = () => triggerSpeedBoost = true, disableMethod = () => triggerSpeedBoost = false, mode = ButtonMode.Toggle, toolTip = "Binds the speed boost mod to your trigger." },
                 new() { buttonText = "Trigger Platforms", enableMethod = () => triggerPlatforms = true, disableMethod = () => triggerPlatforms = false, mode = ButtonMode.Toggle, toolTip = "Spawns platforms on your hands when you press trigger." },
@@ -74,6 +75,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Join Random Room", method = Room.JoinRandomRoom, mode = ButtonMode.Action, toolTip = "Joins a random available room." },
                 new() { buttonText = "Reconnect", method = Room.Reconnect, mode = ButtonMode.Action, toolTip = "Reconnects you to the Photon server." },
                 new() { buttonText = "Reconnect & Rejoin", method = Room.ReconnectAndRejoin, mode = ButtonMode.Action, toolTip = "Reconnects to Photon and attempts to rejoin your previous room." },
+                new() { buttonText = "Join Menu Room", method = Room.JoinMenuRoom, mode = ButtonMode.Action, toolTip = "Joins the BRANDED menu room." },
                 new() { buttonText = "Queue Room [MODS]", method =() => Room.QueueJoinRoom("mods"), mode = ButtonMode.Action, toolTip = "Queues the room MODS." },
                 new() { buttonText = "Queue Room [MOD]", method =() => Room.QueueJoinRoom("mod"), mode = ButtonMode.Action, toolTip = "Queues the room MOD." },
                 new() { buttonText = "Queue Room [MODDER]", method =() => Room.QueueJoinRoom("modder"), mode = ButtonMode.Action, toolTip = "Queues the room MODDER." },
@@ -96,21 +98,20 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Queue Room [ECHO]", method = () => Room.QueueJoinRoom("echo"), mode = ButtonMode.Action, toolTip = "Queues the room ECHO." },
                 new() { buttonText = "Queue Room [WARNING]", method = () => Room.QueueJoinRoom("warning"), mode = ButtonMode.Action, toolTip = "Queues the room WARNING." },
                 new() { buttonText = "Check Master", method = Room.AmIMaster, mode = ButtonMode.Action, toolTip = "Checks if you are the master client of the room." },
-                new() { buttonText = "Join Menu Room", method = Room.JoinMenuRoom, mode = ButtonMode.Action, toolTip = "Joins the BRANDED menu room." },
             ];
 
             public static ButtonInfo[] MovementMods =
             [
                 new() { buttonText = "Exit Movement Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Platforms", method = Mods.Movement.Platforms, mode = ButtonMode.Toggle, toolTip = "Spawns platforms on your hands when you press grip." },
-                new() { buttonText = "Fly", method = Mods.Movement.Fly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A." },
-                new() { buttonText = "Hand Fly", method = Mods.Movement.HandFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward in the direction your hand is pointing while holding A." },
-                new() { buttonText = "Noclip Fly", method = Mods.Movement.NoclipFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A and lets you phase through walls." },
-                new() { buttonText = "Trigger Fly", method = Mods.Movement.TriggerFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding your right trigger." },
-                new() { buttonText = "WASD Fly", enableMethod = Mods.Movement.EnableWASDFly, method = Mods.Movement.WASDFly, disableMethod = () => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), mode = ButtonMode.Toggle, toolTip = "Moves you around with WASD." },
+                new() { buttonText = "Platforms [G]", method = Mods.Movement.Platforms, mode = ButtonMode.Toggle, toolTip = "Spawns platforms on your hands when you press grip." },
+                new() { buttonText = "Fly [A]", method = Mods.Movement.Fly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A." },
+                new() { buttonText = "Hand Fly [A]", method = Mods.Movement.HandFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward in the direction your hand is pointing while holding A." },
+                new() { buttonText = "Noclip Fly [A]", method = Mods.Movement.NoclipFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A and lets you phase through walls." },
+                new() { buttonText = "Trigger Fly [T]", method = Mods.Movement.TriggerFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding your right trigger." },
+                new() { buttonText = "WASD Fly [WASD]", enableMethod = Mods.Movement.EnableWASDFly, method = Mods.Movement.WASDFly, disableMethod = () => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), mode = ButtonMode.Toggle, toolTip = "Moves you around with WASD." },
                 new() { buttonText = "Teleport Gun", method = Mods.Movement.TeleportGun, mode = ButtonMode.Toggle, toolTip = "Teleports you to wherever your pointer is when you press trigger." },
                 new() { buttonText = "Speed Boost", method = Mods.Movement.SpeedBoost, mode = ButtonMode.Toggle, toolTip = "Increases your movement speed." },
-                new() { buttonText = "Noclip", method = Mods.Movement.Noclip, mode = ButtonMode.Toggle, toolTip = "Allows you to move through walls." },
+                new() { buttonText = "Noclip [T]", method = Mods.Movement.Noclip, mode = ButtonMode.Toggle, toolTip = "Allows you to move through walls." },
                 new() { buttonText = "Steam Long Arms", enableMethod = Mods.Movement.EnableSteamLongArms, disableMethod = Mods.Movement.DisableSteamLongArms, method = Mods.Movement.EnableSteamLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates SteamVR's world scale to make your arms longer." },
                 new() { buttonText = "Sticky Hands", enableMethod = Mods.Movement.StickyHands, disableMethod = Mods.Movement.DisableStickyHands, method = Mods.Movement.StickyHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands sticky." },
                 new() { buttonText = "Slide Control", enableMethod = Mods.Movement.EnableSlideControl, disableMethod = Mods.Movement.DisableSlideControl, mode = ButtonMode.Toggle, toolTip = "Allows you to be able to control your sliding." },
@@ -143,10 +144,10 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] PlayerMods =
             [
                 new() { buttonText = "Exit Player Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Fix Head", method = Player.FixHead, mode = ButtonMode.Toggle, toolTip = "Fixes your head." },
-                new() { buttonText = "Grab Rig", method = Player.GrabRig, mode = ButtonMode.Toggle, toolTip = "Lets you grab rigs." },
-                new() { buttonText = "Ghost", method = Player.Ghost, mode = ButtonMode.Toggle, toolTip = "Makes you a ghost." },
-                new() { buttonText = "Invisible", method = Player.Invisible, mode = ButtonMode.Toggle, toolTip = "Makes you invisible." },
+                new() { buttonText = "Fix Head", method = Player.FixHead, mode = ButtonMode.Action, toolTip = "Fixes any bugs with your head." },
+                new() { buttonText = "Grab Rig [G]", method = Player.GrabRig, mode = ButtonMode.Toggle, toolTip = "Lets you grab your rig." },
+                new() { buttonText = "Ghost [A]", method = Player.Ghost, mode = ButtonMode.Toggle, toolTip = "Makes you a ghost." },
+                new() { buttonText = "Invisible [B]", method = Player.Invisible, mode = ButtonMode.Toggle, toolTip = "Makes you invisible." },
                 new() { buttonText = "Spin Head X", method = () => Player.SpinHead("x"), disableMethod = Player.FixHead, mode = ButtonMode.Toggle, toolTip = "Spins your head on the X axis." },
                 new() { buttonText = "Spin Head Y", method = () => Player.SpinHead("Y"), disableMethod = Player.FixHead, mode = ButtonMode.Toggle, toolTip = "Spins your head on the Y axis." },
                 new() { buttonText = "Spin Head Z", method = () => Player.SpinHead("Z"), disableMethod = Player.FixHead, mode = ButtonMode.Toggle, toolTip = "Spins your head on the Z axis." },
@@ -159,6 +160,18 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Spaz Head", method = Player.SpazHeadXYZ, mode = ButtonMode.Toggle, disableMethod = Player.FixHead, toolTip = "Spazzes your head on all axes." },
                 new() { buttonText = "Broken Neck", method = Player.BrokenNeck, mode = ButtonMode.Toggle, disableMethod = Player.FixHead, toolTip = "Breaks your neck." },
                 new() { buttonText = "Head Bang", method = Player.HeadBang, mode = ButtonMode.Toggle, disableMethod = Player.FixHead, toolTip = "Makes your head bang." },
+            ];
+
+        
+            public static ButtonInfo[] AdvantageMods =
+            [
+                new() { buttonText = "Exit Advantage Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Tag Self [M]", method = Advantages.TagSelf, mode = ButtonMode.Toggle, toolTip = "Adds the tag state to you." },
+                new() { buttonText = "Tag Gun [M?]", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag anyone when tagged with a gun." },
+                new() { buttonText = "Tag All [M]", method = Advantages.TagAll, mode = ButtonMode.Toggle, toolTip = "Tags everyone." },
+                new() { buttonText = "Untag All [M]", method = Advantages.UntagAll, mode = ButtonMode.Toggle, toolTip = "Removes the tag state from everyone." },
+                new() { buttonText = "Untag Gun [M]", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tag state from anyone with a gun." },
+                new() { buttonText = "Flick Tag Gun [M?]", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
             ];
 
             public static ButtonInfo[] ImportantMods =
@@ -178,6 +191,7 @@ namespace SharpzReborn.Menu
                 new() { name = "Safety Mods", buttons = SafetyMods },
                 new() { name = "Visual Mods", buttons = VisualMods },
                 new() { name = "Player Mods", buttons = PlayerMods },
+                new() { name = "Advantage Mods", buttons = AdvantageMods },
                 new() { name = "Important Mods", buttons = ImportantMods },
         ];
 

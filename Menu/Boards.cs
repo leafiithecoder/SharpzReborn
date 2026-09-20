@@ -14,7 +14,9 @@ namespace SharpzReborn.Menu
         public static string COCSetText = "Welcome to Sharpz Reborn! A menu made by Sharpz. " +
         "This menu is completely free and open sourced, if you paid for this menu you have been <color=red>scammed.</color> " +
         "I am not responsible for any bans using this menu. " +
-        "If you get banned while using this, it's your responsibility.\n\n<alpha=128>Made with <3 Sharpz.<alpha=255>\n\n ";
+        "If you get banned while using this, it's your responsibility.\n\n<alpha=128>Made with <3 Sharpz.<alpha=255>\n\n " +
+        "Suspected Detected Mods:" +
+        "- Most tag mods";
 
         private static TMP_Text MotdText;
         private static TMP_Text MotdBodyText;

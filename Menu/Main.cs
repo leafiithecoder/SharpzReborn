@@ -24,10 +24,6 @@ namespace SharpzReborn.Menu;
 [HarmonyPatch(typeof(GTPlayer), nameof(GTPlayer.LateUpdate))]
 public class Main : MonoBehaviour
 {
-    public void Update()
-    {
-        Boards.UpdateBoards();
-    }
 
     public static void OnLaunch()
     {
@@ -175,13 +171,14 @@ public class Main : MonoBehaviour
     // Constant
     public static void Prefix()
     {
-        try
+        try // init
         {
             if (!HasLoaded)
             {
                 HasLoaded = true;
                 OnLaunch();
             }
+            Boards.UpdateBoards();
             leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton;
             leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton;
             rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton;
