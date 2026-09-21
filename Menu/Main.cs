@@ -63,6 +63,8 @@ public class Main : MonoBehaviour
 
     public static string success = "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color>";
     public static string fail = "<color=grey>[</color><color=red>FAIL</color><color=grey>]</color>";
+    public static string warning = "<color=grey>[</color><color=red>WARNING</color><color=grey>]</color>";
+    public static string info = "<color=grey>[</color><color=purple>INFO</color><color=grey>]</color>";
 
     public static Vector3 ServerSyncPos;
 

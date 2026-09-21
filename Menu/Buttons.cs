@@ -77,12 +77,12 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Reconnect & Rejoin", method = Room.ReconnectAndRejoin, mode = ButtonMode.Action, toolTip = "Reconnects to Photon and attempts to rejoin your previous room." },
                 new() { buttonText = "Join Menu Room", method = Room.JoinMenuRoom, mode = ButtonMode.Action, toolTip = "Joins the BRANDED menu room." },
                 new() { buttonText = "Check Master", method = Room.AmIMaster, mode = ButtonMode.Action, toolTip = "Checks if you are the master client of the room." },
-                new() { buttonText = "Queue Rooms", method =()=> SetCategory("Queue Room Mods"), mode = ButtonMode.Action, toolTip = "Opens the Queue Rooms tab."}
+                new() { buttonText = "Queue Rooms", method =() => SetCategory("Queue Room Mods"), mode = ButtonMode.Action, toolTip = "Opens the Queue Rooms tab."}
             ];
 
             public static ButtonInfo[] QueueRoomMods =
             [
-                new() { buttonText = "Exit Queue Rooms", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Queue Rooms", method = () => SetCategory("Room"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
                 new() { buttonText = "Queue Room [MODS]", method =() => Room.QueueJoinRoom("mods"), mode = ButtonMode.Action, toolTip = "Queues the room MODS." },
                 new() { buttonText = "Queue Room [MOD]", method =() => Room.QueueJoinRoom("mod"), mode = ButtonMode.Action, toolTip = "Queues the room MOD." },
                 new() { buttonText = "Queue Room [MODDER]", method =() => Room.QueueJoinRoom("modder"), mode = ButtonMode.Action, toolTip = "Queues the room MODDER." },
@@ -172,11 +172,12 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] AdvantageMods =
             [
                 new() { buttonText = "Exit Advantage Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Tag Self [M]", method = Advantages.TagSelf, mode = ButtonMode.Toggle, toolTip = "Adds the tag state to you." },
+                new() { buttonText = "Tag Self [M]", method = Advantages.TagSelf, mode = ButtonMode.Action, toolTip = "Adds the tag state to you." },
                 new() { buttonText = "Tag Gun [M?]", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag anyone when tagged with a gun." },
-                new() { buttonText = "Tag All [M]", method = Advantages.TagAll, mode = ButtonMode.Toggle, toolTip = "Tags everyone." },
-                new() { buttonText = "Untag All [M]", method = Advantages.UntagAll, mode = ButtonMode.Toggle, toolTip = "Removes the tag state from everyone." },
+                new() { buttonText = "Tag All [M]", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone." },
+                new() { buttonText = "Untag All [M]", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tag state from everyone." },
                 new() { buttonText = "Untag Gun [M]", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tag state from anyone with a gun." },
+                new() { buttonText = "Disable Tags [M]", method = Advantages.DisableTags, mode = ButtonMode.Toggle, toolTip = "Constantly removes the tag state from everyone." },
                 new() { buttonText = "Flick Tag Gun [M?]", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
             ];
 
