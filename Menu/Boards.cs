@@ -5,18 +5,25 @@ namespace SharpzReborn.Menu
 {
     public class Boards
     {
+
         public static string Title = "Sharpz Reborn";
         public static string MotdSetText = "Welcome to Sharpz Reborn! A menu made by Sharpz. " +
             "This menu is completely free and open sourced, if you paid for this menu you have been <color=red>scammed.</color> " +
+            $"There are a total of {Buttons.ButtonCount} on this menu." +
             "I am not responsible for any bans using this menu. " +
             "If you get banned while using this, it's your responsibility.\n\n<alpha=128>Made with <3 Sharpz.<alpha=255>\n\n ";
 
         public static string COCSetText = "Welcome to Sharpz Reborn! A menu made by Sharpz. " +
-        "This menu is completely free and open sourced, if you paid for this menu you have been <color=red>scammed.</color> " +
-        "I am not responsible for any bans using this menu. " +
-        "If you get banned while using this, it's your responsibility.\n\n<alpha=128>Made with <3 Sharpz.<alpha=255>\n\n " +
-        "Suspected Detected Mods:" +
-        "- Most tag mods";
+        "Suspected Detected Mods:\n" +
+        "- None\n" +
+        "\n" +
+        "Meanings:" +
+        "[<color=purple>M</color>] Requires Master\n" +
+        "[<color=purple>M?</color>] Maybe Requires Master\n" +
+        "[<color=purple>D</color>] Detected 100%\n" +
+        "[<color=purple>D</color>] Maybe Detected \n";
+
+
 
         private static TMP_Text MotdText;
         private static TMP_Text MotdBodyText;

@@ -146,5 +146,12 @@ namespace SharpzReborn.Mods
 
             QueueRoom(roomName.ToUpper());
         }
+
+        public static string PrivateRoomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+        public static void JoinRandomPriv()
+        {
+
+        }
     }
 }

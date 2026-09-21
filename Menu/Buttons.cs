@@ -16,26 +16,26 @@ namespace SharpzReborn.Menu
     {
             public static ButtonInfo[] MainMods =
             [
-                new() { buttonText = "Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, toolTip = "Opens the settings." },
-                new() { buttonText = "Photon", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, toolTip = "Opens the room mods." },
-                new() { buttonText = "Movement", method = () => SetCategory("Movement Mods"), mode = ButtonMode.Action, toolTip = "Opens the movement mods." },
-                new() { buttonText = "Safety", method = () => SetCategory("Safety Mods"), mode = ButtonMode.Action, toolTip = "Opens the safety mods." },
-                new() { buttonText = "Visual", method = () => SetCategory("Visual Mods"), mode = ButtonMode.Action, toolTip = "Opens the visual mods." },
-                new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, toolTip = "Opens the player mods." },
-                new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, toolTip = "Opens the player mods." },
-                new() { buttonText = "Important", method = () => SetCategory("Important Mods"), mode = ButtonMode.Action, toolTip = "Opens the important mods." },
+                new() { buttonText = "Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the settings." },
+                new() { buttonText = "Photon", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the room mods." },
+                new() { buttonText = "Movement", method = () => SetCategory("Movement Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the movement mods." },
+                new() { buttonText = "Safety", method = () => SetCategory("Safety Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the safety mods." },
+                new() { buttonText = "Visual", method = () => SetCategory("Visual Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the visual mods." },
+                new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods." },
+                new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods." },
+                new() { buttonText = "Important", method = () => SetCategory("Important Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the important mods." },
             ];
 
             public static ButtonInfo[] Settings =
             [
-                new() { buttonText = "Exit Settings", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Settings", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
                 new() { buttonText = "Menu Settings", method = () => SetCategory("Menu Settings"), mode = ButtonMode.Action, toolTip = "Opens the menu settings." },
                 new() { buttonText = "Movement Settings", method = () => SetCategory("Movement Settings"), mode = ButtonMode.Action, toolTip = "Opens the movement settings." },
             ];
 
             private static readonly ButtonInfo[] MenuSettings =
             [
-                new() { buttonText = "Exit Menu Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, toolTip = "Returns to the main settings page." },
+                new() { buttonText = "Exit Menu Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main settings page." },
                 new() { buttonText = "Right Handed Menu", enableMethod = () => Menu.Settings.rightHanded = true, disableMethod = () => Menu.Settings.rightHanded = false, enabled = Menu.Settings.rightHanded, mode = ButtonMode.Toggle, toolTip = "Moves the menu to your right hand." },
                 new() { buttonText = "Disable Notifications", enableMethod = () => Menu.Settings.disableNotifications = true, disableMethod = () => Menu.Settings.disableNotifications = false, enabled = Menu.Settings.disableNotifications, mode = ButtonMode.Toggle, toolTip = "Disables notifications." },
                 new() { buttonText = "Disable FPS Counter", enableMethod = () => Menu.Settings.fpsCounter = false, disableMethod = () => Menu.Settings.fpsCounter = true, enabled = !Menu.Settings.fpsCounter, mode = ButtonMode.Toggle, toolTip = "Disables the FPS counter." },
@@ -55,7 +55,7 @@ namespace SharpzReborn.Menu
 
             public static ButtonInfo[] MovementSettings =
             [
-                new() { buttonText = "Exit Movement Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, toolTip = "Returns to the main settings page." },
+                new() { buttonText = "Exit Movement Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main settings page." },
                 new() { buttonText = "Change Fly Speed", overlapText = $"Change Fly Speed [{Mods.Settings.Movement.flySpeedNames[Mods.Settings.Movement.flySpeedIndex]}]", incrementMethod = Mods.Settings.Movement.ChangeFlySpeed, mode = ButtonMode.Incremental, toolTip = "Changes the fly speed." },
                 new() { buttonText = "Change Arm Length", overlapText = $"Change Arm Length [{Mods.Settings.Movement.armLengthNames[Mods.Settings.Movement.armLengthIndex]}]", incrementMethod = Mods.Settings.Movement.ChangeArmLength, mode = ButtonMode.Incremental, toolTip = "Changes the length of your arms." },
                 new() { buttonText = "Change Speed Boost Amount", overlapText = $"Change Speed Boost Amount [{Mods.Settings.Movement.speedNames[Mods.Settings.Movement.speedAmountIndex]}]", incrementMethod = Mods.Settings.Movement.ChangeSpeedBoostAmount, mode = ButtonMode.Incremental, toolTip = "Changes the amount of your speed boost." },
@@ -69,13 +69,20 @@ namespace SharpzReborn.Menu
 
             public static ButtonInfo[] RoomMods =
             [
-                new() { buttonText = "Exit Photon Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Photon Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
                 new() { buttonText = "Disconnect", method = () => NetworkSystem.Instance.ReturnToSinglePlayer(), mode = ButtonMode.Action, toolTip = "Disconnects you from the current room." },
                 new() { buttonText = "Join Last Room", method = Room.JoinLastRoom, mode = ButtonMode.Action, toolTip = "Joins the last room you were in." },
-                new() { buttonText = "Join Random Room", method = Room.JoinRandomRoom, mode = ButtonMode.Action, toolTip = "Joins a random available room." },
+                new() { buttonText = "Join Random Pub", method = Room.JoinRandomRoom, mode = ButtonMode.Action, toolTip = "Joins a random available room." },
                 new() { buttonText = "Reconnect", method = Room.Reconnect, mode = ButtonMode.Action, toolTip = "Reconnects you to the Photon server." },
                 new() { buttonText = "Reconnect & Rejoin", method = Room.ReconnectAndRejoin, mode = ButtonMode.Action, toolTip = "Reconnects to Photon and attempts to rejoin your previous room." },
                 new() { buttonText = "Join Menu Room", method = Room.JoinMenuRoom, mode = ButtonMode.Action, toolTip = "Joins the BRANDED menu room." },
+                new() { buttonText = "Check Master", method = Room.AmIMaster, mode = ButtonMode.Action, toolTip = "Checks if you are the master client of the room." },
+                new() { buttonText = "Queue Rooms", method =()=> SetCategory("Queue Room Mods"), mode = ButtonMode.Action, toolTip = "Opens the Queue Rooms tab."}
+            ];
+
+            public static ButtonInfo[] QueueRoomMods =
+            [
+                new() { buttonText = "Exit Queue Rooms", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
                 new() { buttonText = "Queue Room [MODS]", method =() => Room.QueueJoinRoom("mods"), mode = ButtonMode.Action, toolTip = "Queues the room MODS." },
                 new() { buttonText = "Queue Room [MOD]", method =() => Room.QueueJoinRoom("mod"), mode = ButtonMode.Action, toolTip = "Queues the room MOD." },
                 new() { buttonText = "Queue Room [MODDER]", method =() => Room.QueueJoinRoom("modder"), mode = ButtonMode.Action, toolTip = "Queues the room MODDER." },
@@ -97,12 +104,11 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Queue Room [PAUL]", method = () => Room.QueueJoinRoom("paul"), mode = ButtonMode.Action, toolTip = "Queues the room PAUL." },
                 new() { buttonText = "Queue Room [ECHO]", method = () => Room.QueueJoinRoom("echo"), mode = ButtonMode.Action, toolTip = "Queues the room ECHO." },
                 new() { buttonText = "Queue Room [WARNING]", method = () => Room.QueueJoinRoom("warning"), mode = ButtonMode.Action, toolTip = "Queues the room WARNING." },
-                new() { buttonText = "Check Master", method = Room.AmIMaster, mode = ButtonMode.Action, toolTip = "Checks if you are the master client of the room." },
             ];
 
             public static ButtonInfo[] MovementMods =
             [
-                new() { buttonText = "Exit Movement Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Movement Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
                 new() { buttonText = "Platforms [G]", method = Mods.Movement.Platforms, mode = ButtonMode.Toggle, toolTip = "Spawns platforms on your hands when you press grip." },
                 new() { buttonText = "Fly [A]", method = Mods.Movement.Fly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A." },
                 new() { buttonText = "Hand Fly [A]", method = Mods.Movement.HandFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward in the direction your hand is pointing while holding A." },
@@ -115,9 +121,9 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Steam Long Arms", enableMethod = Mods.Movement.EnableSteamLongArms, disableMethod = Mods.Movement.DisableSteamLongArms, method = Mods.Movement.EnableSteamLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates SteamVR's world scale to make your arms longer." },
                 new() { buttonText = "Sticky Hands", enableMethod = Mods.Movement.StickyHands, disableMethod = Mods.Movement.DisableStickyHands, method = Mods.Movement.StickyHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands sticky." },
                 new() { buttonText = "Slide Control", enableMethod = Mods.Movement.EnableSlideControl, disableMethod = Mods.Movement.DisableSlideControl, mode = ButtonMode.Toggle, toolTip = "Allows you to be able to control your sliding." },
-                new() { buttonText = "Low Gravity", method = Mods.Movement.LowGravity, mode = ButtonMode.Toggle, toolTip = "Reduces the gravity on you." },
-                new() { buttonText = "Zero Gravity", method = Mods.Movement.ZeroGravity, mode = ButtonMode.Toggle, toolTip = "Removes gravity from you." },
-                new() { buttonText = "High Gravity", method = Mods.Movement.HighGravity, mode = ButtonMode.Toggle, toolTip = "Increases the gravity on you." },
+                new() { buttonText = "Moon Walk", method = Mods.Movement.LowGravity, mode = ButtonMode.Toggle, toolTip = "Reduces the gravity on you." },
+                new() { buttonText = "No Gravity", method = Mods.Movement.ZeroGravity, mode = ButtonMode.Toggle, toolTip = "Removes gravity from you." },
+                new() { buttonText = "Jupiter Walk", method = Mods.Movement.HighGravity, mode = ButtonMode.Toggle, toolTip = "Increases the gravity on you." },
                 new() { buttonText = "Up And Down", method = Mods.Movement.UpAndDown, mode = ButtonMode.Toggle, toolTip = "Moves you up and down." },
                 new() { buttonText = "Left And Right", method = Mods.Movement.LeftAndRight, mode = ButtonMode.Toggle, toolTip = "Moves you left and right." },
                 new() { buttonText = "Forwards And Backwards", method = Mods.Movement.ForwardsAndBackwards, mode = ButtonMode.Toggle, toolTip = "Moves you forwards and backwards." },
@@ -187,6 +193,7 @@ namespace SharpzReborn.Menu
                 new() { name = "Menu Settings", buttons = MenuSettings },
                 new() { name = "Movement Settings", buttons = MovementSettings },
                 new() { name = "Room Mods", buttons = RoomMods },
+                new() { name = "Queue Room Mods", buttons = QueueRoomMods},
                 new() { name = "Movement Mods", buttons = MovementMods },
                 new() { name = "Safety Mods", buttons = SafetyMods },
                 new() { name = "Visual Mods", buttons = VisualMods },
@@ -206,6 +213,9 @@ namespace SharpzReborn.Menu
                         SavedToggleButtonLookup;
 
         public static ButtonInfo[] AllButtons { get; } = BuildButtonArray();
+
+        public static int ButtonCount =>
+            AllButtons.Count(button => button != null && !button.isCategory);
 
         public static ButtonCategory GetCategory(string categoryName)
         {

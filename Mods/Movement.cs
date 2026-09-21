@@ -429,4 +429,25 @@ public abstract class Movement
         else
             lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
     }
+    private static Vector3 walkPos;
+    private static Vector3 walkNormal;
+    private static float wallWalkStrength = 9.81f;
+
+    public static void WallWalk()
+    {
+        if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
+        {
+            RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
+            walkPos = ray.point;
+            walkNormal = ray.normal;
+        }
+
+        bool wallWalkKey = rightGrab || leftGrab;
+
+        if (walkPos != Vector3.zero && wallWalkKey)
+        {
+            GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -wallWalkStrength, ForceMode.Acceleration);
+            ZeroGravity();
+        }
+    }
 }

@@ -2581,7 +2581,7 @@ public class Main : MonoBehaviour
                             ray,
                             maxDistance,
                             ~0,
-                            QueryTriggerInteraction.Ignore);
+                            QueryTriggerInteraction.Collide);
 
             hit = default(RaycastHit);
 
@@ -2602,6 +2602,13 @@ public class Main : MonoBehaviour
                                     (layerMask & GTPlayer.Instance.locomotionEnabledLayers) != 0;
 
                     VRRig rig = collider.GetComponentInParent<VRRig>();
+
+                    Debug.Log(
+                        $"[GunDebug] {collider.name} | " +
+                        $"Trigger: {collider.isTrigger} | " +
+                        $"Layer: {collider.gameObject.layer} | " +
+                        $"Has VRRig: {rig != null}"
+                    );
 
                     bool isRig =
                                     rig != null &&
@@ -2699,6 +2706,13 @@ public class Main : MonoBehaviour
 
             GunLine.SetPosition(i, position);
         }
+    }
+
+    public static bool GetGunInput(bool isShooting)
+    {
+        return isShooting
+            ? rightTrigger > 0.5f
+            : rightGrab || Mouse.current.rightButton.isPressed;
     }
 
     public static void RPCProtection()

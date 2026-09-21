@@ -56,7 +56,7 @@ public class Movement
     {
         flySpeedIndex = Mathf.Clamp(flySpeedIndex, 0, flySpeedValues.Length - 1);
         flySpeed = flySpeedValues[flySpeedIndex];
-        GetIndex("Change Fly Speed").overlapText = $"Change Fly Speed {flySpeedNames[flySpeedIndex]}";
+        GetIndex("Change Fly Speed").overlapText = $"Change Fly Speed [{flySpeedNames[flySpeedIndex]}]";
     }
 
     public static int speedAmountIndex = 1;
@@ -115,7 +115,7 @@ public class Movement
         speedAmountIndex = Mathf.Clamp(speedAmountIndex, 0, speedValues.Length - 1);
         speedAmount = speedValues[speedAmountIndex];
         speedMultiplier = speedMultis[speedAmountIndex];
-        GetIndex("Change Speed Boost Amount").overlapText = $"Change Speed Boost Amount {speedNames[speedAmountIndex]}";
+        GetIndex("Change Speed Boost Amount").overlapText = $"Change Speed Boost Amount [{speedNames[speedAmountIndex]}]";
     }
     public static readonly float[] armLengthAmounts =
     [
