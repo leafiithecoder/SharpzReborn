@@ -109,13 +109,6 @@ namespace SharpzReborn.Extensions
             if (concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") || rig.GetPhotonPlayer().CustomProperties.Count >= 2)
                 suspiciouslyPC++;
 
-            /*
-            if (rig.currentRankedSubTierPC > 0)
-                suspiciouslyPC++;
-            else if (rig.currentRankedSubTierQuest > 0)
-                suspiciouslyQuest++;
-            */
-
             if (!string.IsNullOrEmpty(platform) && Enum.TryParse(platform, out PlatformType result))
                 return result;
             int max = Math.Max(suspiciouslySteam, Math.Max(suspiciouslyPC, suspiciouslyQuest));
@@ -132,8 +125,6 @@ namespace SharpzReborn.Extensions
 
         public static Color GetColor(this VRRig rig)
         {
-            if (Buttons.GetIndex("Follow Player Colors").enabled)
-                return rig.playerColor;
 
             if (rig.bodyRenderer.cosmeticBodyType == GorillaBodyType.Skeleton)
                 return Color.green;

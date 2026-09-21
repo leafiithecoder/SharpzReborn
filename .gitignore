@@ -13,6 +13,8 @@
 *.sln.docstates
 
 *.cmd
+autogit.cmd
+deploygit.cmd
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

@@ -129,6 +129,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Forwards And Backwards", method = Mods.Movement.ForwardsAndBackwards, mode = ButtonMode.Toggle, toolTip = "Moves you forwards and backwards." },
                 new() { buttonText = "Force Tag Freeze", method = Mods.Movement.ForceTagFreeze, mode = ButtonMode.Toggle, toolTip = "Forces tag freeze." },
                 new() { buttonText = "No Tag Freeze", method = Mods.Movement.NoTagFreeze, mode = ButtonMode.Toggle, toolTip = "Removes tag freeze." },
+                new() { buttonText = "Wall Walk [G]", method = Mods.Movement.WallWalk, mode = ButtonMode.Toggle, toolTip = "Allows you to walk on walls." },
             ];
 
             public static ButtonInfo[] SafetyMods =
@@ -172,13 +173,13 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] AdvantageMods =
             [
                 new() { buttonText = "Exit Advantage Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Tag Self [M]", method = Advantages.TagSelf, mode = ButtonMode.Action, toolTip = "Adds the tag state to you." },
-                new() { buttonText = "Tag Gun [M?]", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag anyone when tagged with a gun." },
-                new() { buttonText = "Tag All [M]", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone." },
+                new() { buttonText = "Tag Self", method = Advantages.TagSelf, mode = ButtonMode.Action, toolTip = "Adds the tag state to you." },
+                new() { buttonText = "Tag Gun", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag anyone when tagged with a gun." },
+                new() { buttonText = "Tag All", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone." },
                 new() { buttonText = "Untag All [M]", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tag state from everyone." },
                 new() { buttonText = "Untag Gun [M]", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tag state from anyone with a gun." },
                 new() { buttonText = "Disable Tags [M]", method = Advantages.DisableTags, mode = ButtonMode.Toggle, toolTip = "Constantly removes the tag state from everyone." },
-                new() { buttonText = "Flick Tag Gun [M?]", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
+                new() { buttonText = "Flick Tag Gun", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
             ];
 
             public static ButtonInfo[] ImportantMods =
