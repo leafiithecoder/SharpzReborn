@@ -230,67 +230,52 @@ namespace SharpzReborn.Mods
 
         public static void UntagGun()
         {
-            if (!rightGrab) return;
+            if (!GetGunInput(false))
+                return;
 
-            var GunData = RenderGun();
-            RaycastHit Ray = GunData.Ray;
+            var gunData = RenderGun();
+            RaycastHit ray = gunData.Ray;
 
-            if (Ray.collider == null)
-            {
-                Debug.Log("[GunDebug] Raycast hit nothing.");
-            }
+            if (!GetGunInput(true) || ray.collider == null)
+                return;
+
+            VRRig gunTarget = ray.collider.GetComponentInParent<VRRig>();
+
+            if (gunTarget == null || gunTarget.IsLocal() || !gunTarget.IsTagged())
+                return;
+
+            if (PhotonNetwork.IsMasterClient)
+                RemoveInfected(GetPlayerFromVRRig(gunTarget));
             else
-            {
-                Debug.Log($"[GunDebug] Hit: {Ray.collider.name}");
-                Debug.Log($"[GunDebug] Layer: {Ray.collider.gameObject.layer}");
-                Debug.Log($"[GunDebug] Parent VRRig: " +
-                    (Ray.collider.GetComponentInParent<VRRig>() != null));
-            }
-
-            if (!rightTriggerPressed) return;
-
-            VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-
-            if (gunTarget && !gunTarget.IsLocal() && gunTarget.IsTagged())
-            {
-                if (PhotonNetwork.IsMasterClient)
-                    RemoveInfected(GetPlayerFromVRRig(gunTarget));
-                else
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
-            }
+                NotifiLib.SendNotification(
+                    "<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
 
         public static void FlickTagGun()
         {
-            if (!rightGrab || !rightTriggerPressed) return;
+            if (!GetGunInput(false))
+                return;
 
-            var GunData = RenderGun();
-            RaycastHit Ray = GunData.Ray;
+            var gunData = RenderGun();
 
-            if (Ray.collider == null)
-            {
-                Debug.Log("[GunDebug] Raycast hit nothing.");
-            }
-            else
-            {
-                Debug.Log($"[GunDebug] Hit: {Ray.collider.name}");
-                Debug.Log($"[GunDebug] Layer: {Ray.collider.gameObject.layer}");
-                Debug.Log($"[GunDebug] Parent VRRig: " +
-                    (Ray.collider.GetComponentInParent<VRRig>() != null));
-            }
-            GameObject NewPointer = GunData.NewPointer;
+            if (!GetGunInput(true))
+                return;
 
-            GTPlayer.Instance.GetControllerTransform(false).position = NewPointer.transform.position;
+            GameObject newPointer = gunData.NewPointer;
 
-            if (Vector3.Distance(
-                GTPlayer.Instance.GetControllerTransform(false).position,
-                GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
-            {
-                GTPlayer.Instance.GetControllerTransform(false).position =
-                    GorillaTagger.Instance.bodyCollider.transform.position +
-                    (GTPlayer.Instance.GetControllerTransform(false).position -
-                     GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
-            }
+            if (newPointer == null)
+                return;
+
+            Transform controller = GTPlayer.Instance.GetControllerTransform(false);
+            Vector3 bodyPosition = GorillaTagger.Instance.bodyCollider.transform.position;
+            Vector3 targetPosition = newPointer.transform.position;
+
+            Vector3 offset = targetPosition - bodyPosition;
+
+            if (offset.sqrMagnitude > 16f)
+                targetPosition = bodyPosition + offset.normalized * 4f;
+
+            controller.position = targetPosition;
         }
     }
 }
