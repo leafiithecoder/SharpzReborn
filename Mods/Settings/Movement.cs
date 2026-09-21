@@ -164,6 +164,6 @@ public class Movement
     {
         armLengthIndex = Mathf.Clamp(armLengthIndex, 0, armLengthAmounts.Length - 1);
         armLength = armLengthAmounts[armLengthIndex];
-        GetIndex("Change Arm Length").overlapText = $"Change Arm Length {armLengthNames[armLengthIndex]}";
+        GetIndex("Change Arm Length").overlapText = $"Change Arm Length [{armLengthNames[armLengthIndex]}]";
     }
 }
