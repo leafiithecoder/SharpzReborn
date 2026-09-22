@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using static SharpzReborn.Classes.RigManager;
-
+using static SharpzReborn.Menu.Main;
 namespace SharpzReborn.Mods
 {
     public class Safety
@@ -43,7 +43,7 @@ namespace SharpzReborn.Mods
 
                                if (!(Time.time > antiReportDelay)) return;
                                antiReportDelay = Time.time + 1f;
-                               NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+                               NotifiLib.SendNotification($"{ModInfoNotif("ANTI-REPORT")} " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
                            });
         public static void NoFingerMovement()
         {
@@ -84,7 +84,7 @@ namespace SharpzReborn.Mods
                 }
                 catch { }
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                NotifiLib.SendNotification($"<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> {vrrig.GetName()} is a moderator, you have been disconnected.");
+                NotifiLib.SendNotification($"{ModInfoNotif("ANTI-MODERATOR")} {vrrig.GetName()} is a moderator, you have been disconnected.");
             }
         }
     }

@@ -2716,6 +2716,11 @@ public class Main : MonoBehaviour
             ? rightTrigger > 0.5f
             : rightGrab || Mouse.current.rightButton.isPressed;
     }
+    
+    public static string ModInfoNotif(string name)
+    {
+        return ($"<color=grey>[</color><color=purple>{name}</color><color=grey>]</color>");
+    }
 
     public static void RPCProtection()
     {

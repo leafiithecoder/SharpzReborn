@@ -36,6 +36,7 @@ namespace SharpzReborn.Menu
             private static readonly ButtonInfo[] MenuSettings =
             [
                 new() { buttonText = "Exit Menu Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main settings page." },
+                new() { buttonText = "Clear Notifs", method = Notifications.NotifiLib.ClearAllNotifications, mode = ButtonMode.Action, toolTip = "Clears all notifications."},
                 new() { buttonText = "Right Handed Menu", enableMethod = () => Menu.Settings.rightHanded = true, disableMethod = () => Menu.Settings.rightHanded = false, enabled = Menu.Settings.rightHanded, mode = ButtonMode.Toggle, toolTip = "Moves the menu to your right hand." },
                 new() { buttonText = "Disable Notifications", enableMethod = () => Menu.Settings.disableNotifications = true, disableMethod = () => Menu.Settings.disableNotifications = false, enabled = Menu.Settings.disableNotifications, mode = ButtonMode.Toggle, toolTip = "Disables notifications." },
                 new() { buttonText = "Disable FPS Counter", enableMethod = () => Menu.Settings.fpsCounter = false, disableMethod = () => Menu.Settings.fpsCounter = true, enabled = !Menu.Settings.fpsCounter, mode = ButtonMode.Toggle, toolTip = "Disables the FPS counter." },
