@@ -66,6 +66,24 @@ namespace SharpzReborn.Mods
             lastHit2 = hit;
         }
 
+        public static GameObject gsphereR;
+        public static GameObject gsphereL;
+        public static void GhostView()
+        {
+            if (ghostMonke || invisMonke)
+            {
+                gsphereL = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                gsphereL.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                gsphereL.transform.localScale = new Vector3(0.111f, 0.111f, 0.111f);
+                gsphereL.GetComponent<Renderer>().material.color = Color.violet;
+
+                gsphereR = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                gsphereR.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                gsphereR.transform.localScale = new Vector3(0.111f, 0.111f, 0.111f);
+                gsphereR.GetComponent<Renderer>().material.color = Color.violet;
+            }
+        }
+
         private static readonly float headSpinSpeed = 10f;
         public static void SpinHead(string axis)
         {
@@ -155,12 +173,6 @@ namespace SharpzReborn.Mods
         public static void SidewaysHead() =>
             VRRig.LocalRig.head.trackingRotationOffset.y = 90f;
 
-        public static void BigHead() =>
-            VRRig.LocalRig.head.rigTarget.transform.localScale = Vector3.one * 2f;
-
-        public static void SmallHead() =>
-            VRRig.LocalRig.head.rigTarget.transform.localScale = Vector3.one * 0.3f;
-
         public static float lastBangTime;
         public static void HeadBang()
         {
@@ -171,6 +183,19 @@ namespace SharpzReborn.Mods
             }
             else
                 VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x, 0f, 0.1f);
+        }
+        public static void Helicopter()
+        {
+            if (ControllerInputPoller.instance.rightControllerIndexFloat > .5)
+            {
+                VRRig.LocalRig.enabled = false;
+                GorillaTagger.Instance.offlineVRRig.rightHandTransform.position = Camera.main.transform.position + Camera.main.transform.right * 2;
+                GorillaTagger.Instance.offlineVRRig.leftHandTransform.position = Camera.main.transform.position - Camera.main.transform.right * 2;
+                VRRig.LocalRig.transform.Rotate(new Vector3(0, 2.5f, 0));
+                VRRig.LocalRig.transform.position += new Vector3(0, 0.01f, 0);
+            }
+            else
+                VRRig.LocalRig.enabled = true;
         }
     }
 }

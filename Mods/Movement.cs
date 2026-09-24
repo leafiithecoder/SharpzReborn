@@ -69,13 +69,21 @@ public abstract class Movement
 
     public static void Platforms()
     {
-        bool leftGrip =
-                ControllerInputPoller.instance.leftGrab;
+        bool leftActive;
+        bool rightActive;
 
-        bool rightGrip =
-                ControllerInputPoller.instance.rightGrab;
+        if (triggerPlatforms)
+        {
+            leftActive = leftTriggerPressed;
+            rightActive = rightTriggerPressed;
+        }
+        else
+        {
+            leftActive = ControllerInputPoller.instance.leftGrab;
+            rightActive = ControllerInputPoller.instance.rightGrab;
+        }
 
-        if (leftGrip)
+        if (leftActive)
         {
             if (platl == null)
             {
@@ -114,7 +122,7 @@ public abstract class Movement
                     null;
         }
 
-        if (rightGrip)
+        if (rightActive)
         {
             if (platr == null)
             {
@@ -133,7 +141,7 @@ public abstract class Movement
 
                 platr.transform.rotation =
                         TrueRightHand().rotation;
-                
+
                 FixStickyColliders(
                         platr);
 
@@ -225,6 +233,13 @@ public abstract class Movement
         GTPlayer.Instance.transform.localScale = Vector3.one * VRRig.LocalRig.NativeScale * Settings.Movement.armLength;
     public static void DisableSteamLongArms() =>
         GTPlayer.Instance.transform.localScale = Vector3.one * VRRig.LocalRig.NativeScale;
+
+    public static void StickLongArms()
+    {
+        GTPlayer.Instance.GetControllerTransform(true).transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * ((Settings.Movement.armLength - 0.917f) * GTPlayer.Instance.scale);
+        GTPlayer.Instance.GetControllerTransform(false).transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * ((Settings.Movement.armLength - 0.917f) * GTPlayer.Instance.scale);
+    }
+
     public static GameObject stickpart;
     public static void StickyHands()
     {

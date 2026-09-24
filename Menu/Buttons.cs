@@ -1,4 +1,5 @@
 ﻿using GorillaLocomotion;
+using GorillaNetworking;
 using Pathfinding.RVO.Sampled;
 using SharpzReborn.Classes;
 using SharpzReborn.Mods;
@@ -22,6 +23,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Safety", method = () => SetCategory("Safety Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the safety mods." },
                 new() { buttonText = "Visual", method = () => SetCategory("Visual Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the visual mods." },
                 new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods." },
+                new() { buttonText = "Fun", method = () => SetCategory("Fun Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the fun mods." },
                 new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods." },
                 new() { buttonText = "Important", method = () => SetCategory("Important Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the important mods." },
             ];
@@ -140,6 +142,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Anti Moderator [Disconnect]", method = Safety.AntiModerator, mode = ButtonMode.Toggle, toolTip = "Disconnects when there is a moderator in the lobby." },
                 new() { buttonText = "No Finger Movement", method = Safety.NoFingerMovement, mode = ButtonMode.Toggle, toolTip = "Disables finger movement." },
                 new() { buttonText = "Flush RPCs", method = Safety.FlushRPCs, mode = ButtonMode.Action, toolTip = "Flushes RPCs." },
+                new() { buttonText = "Anti Report [Quest]", enableMethod = Safety.EnableAntiOculusReport, disableMethod = Safety.DisableAntiOculusReport, toolTip = "Disconnects when you get reported using the Meta Quest report menu."},
             ];
 
             public static ButtonInfo[] VisualMods =
@@ -170,7 +173,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Head Bang", method = Player.HeadBang, mode = ButtonMode.Toggle, disableMethod = Player.FixHead, toolTip = "Makes your head bang." },
             ];
 
-        
+
             public static ButtonInfo[] AdvantageMods =
             [
                 new() { buttonText = "Exit Advantage Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
@@ -179,7 +182,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Tag All", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone." },
                 new() { buttonText = "Untag All [M]", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tag state from everyone." },
                 new() { buttonText = "Untag Gun [M]", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tag state from anyone with a gun." },
-                new() { buttonText = "Disable Tags [M]", method = Advantages.DisableTags, mode = ButtonMode.Toggle, toolTip = "Constantly removes the tag state from everyone." },
+                new() { buttonText = "Disable Tags [M]", method = Advantages.DisableTags, mode = ButtonMode.Toggle, disableMethod = Notifications.NotifiLib.ClearAllNotifications, toolTip = "Constantly removes the tag state from everyone." },
                 new() { buttonText = "Flick Tag Gun", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
             ];
 
@@ -189,7 +192,19 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Crash", method = Application.Quit, mode = ButtonMode.Action, toolTip = "Closes the game." },
             ];
 
-            public static ButtonCategory[] Categories =
+            public static ButtonInfo[] FunMods =
+            [
+                new() { buttonText = "Exit Fun Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Water Bending [R]", method = Fun.WaterR, mode = ButtonMode.Toggle, toolTip = "Spawns water splashes at your right hand." },
+                new() { buttonText = "Water Bending [L]", method = Fun.WaterL, mode = ButtonMode.Toggle, toolTip = "Spawns water splashes at your left hand." },
+                new() { buttonText = "Water Splash Gun", method = Fun.WaterSplashGun, mode = ButtonMode.Toggle, toolTip = "Spawns water splashes wherever your gun desires." },
+                new() { buttonText = "Waterbender Gun", method = Fun.GiveWaterBendingGun, mode = ButtonMode.Toggle, toolTip = "Allows you to make anyone a waterbender." },
+                new() { buttonText = "Max Quest Score", method =() => SetScore(99999), mode = ButtonMode.Action, toolTip = "Sets your quest score to the maximum value." },
+                new() { buttonText = "No Quest Score", method =() => SetScore(0), mode = ButtonMode.Action, toolTip = "Sets your quest score to 0." },
+                new() { buttonText = "Lowercase Name", method =() => ChangeName(GorillaComputer.instance.currentName.ToLower()), mode = ButtonMode.Action, toolTip = "Lowercases your name."}
+            ];
+
+        public static ButtonCategory[] Categories =
             [
                 new() { name = "Main", buttons = MainMods },
                 new() { name = "Settings", buttons = Settings },
@@ -202,6 +217,7 @@ namespace SharpzReborn.Menu
                 new() { name = "Visual Mods", buttons = VisualMods },
                 new() { name = "Player Mods", buttons = PlayerMods },
                 new() { name = "Advantage Mods", buttons = AdvantageMods },
+                new() { name = "Fun Mods", buttons = FunMods },
                 new() { name = "Important Mods", buttons = ImportantMods },
         ];
 

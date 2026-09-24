@@ -1,5 +1,6 @@
 using BepInEx;
 using GorillaLocomotion;
+using GorillaNetworking;
 using HarmonyLib;
 using MonoMod.ModInterop;
 using Photon.Pun;
@@ -8,7 +9,6 @@ using SharpzReborn.Classes;
 using SharpzReborn.Notifications;
 using SharpzReborn.Tools;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,6 +24,13 @@ namespace SharpzReborn.Menu;
 [HarmonyPatch(typeof(GTPlayer), nameof(GTPlayer.LateUpdate))]
 public class Main : MonoBehaviour
 {
+    /*
+     * credits to ii's stupid menu or something
+     * 
+     * log:
+     * maybe fixed tag mods idk
+     * trigger plats fixed
+     */
 
     public static void OnLaunch()
     {
@@ -2740,5 +2747,39 @@ public class Main : MonoBehaviour
             PhotonNetwork.SendAllOutgoingCommands();
         }
         catch { Debug.Log("RPC protection failed, are you in a lobby?"); }
+    }
+
+    public static void ChangeName(string PlayerName)
+    {
+        GorillaComputer.instance.currentName = PlayerName;
+
+        GorillaComputer.instance.SetLocalNameTagText(GorillaComputer.instance.currentName);
+        GorillaComputer.instance.savedName = GorillaComputer.instance.currentName;
+        PlayerPrefs.SetString("playerName", GorillaComputer.instance.currentName);
+        PlayerPrefs.Save();
+
+        PhotonNetwork.LocalPlayer.NickName = PlayerName;
+    }
+    public static void SetScore(int score)
+    {
+        GorillaTagger.Instance.offlineVRRig.SetQuestScore(score);
+    }
+
+    public static float delay;
+    public static void SendWaterRPC(Vector3 pos, Quaternion rot)
+    {
+        if (delay < Time.time)
+        {
+            delay = Time.time + 0.2f;
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
+            {
+                    pos,
+                    rot,
+                    3f,
+                    50f,
+                    true,
+                    false,
+            });
+        }
     }
 }

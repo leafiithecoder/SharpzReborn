@@ -101,32 +101,33 @@ namespace SharpzReborn.Mods
                     if (!lockTarget.IsTagged())
                     {
                         VRRig.LocalRig.enabled = false;
-                            Vector3 position = lockTarget.transform.position + RandomVector3();
 
-                            VRRig.LocalRig.transform.position = position;
+                        Vector3 position = lockTarget.transform.position + RandomVector3();
 
-                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                        VRRig.LocalRig.transform.position = position;
 
-                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                        VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                        VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
 
-                            VRRig.LocalRig.leftIndex.calcT = 0f;
-                            VRRig.LocalRig.leftMiddle.calcT = 0f;
-                            VRRig.LocalRig.leftThumb.calcT = 0f;
+                        VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                        VRRig.LocalRig.leftIndex.calcT = 0f;
+                        VRRig.LocalRig.leftMiddle.calcT = 0f;
+                        VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                            VRRig.LocalRig.rightIndex.calcT = 0f;
-                            VRRig.LocalRig.rightMiddle.calcT = 0f;
-                            VRRig.LocalRig.rightThumb.calcT = 0f;
+                        VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                        VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                        VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                        VRRig.LocalRig.rightIndex.calcT = 0f;
+                        VRRig.LocalRig.rightMiddle.calcT = 0f;
+                        VRRig.LocalRig.rightThumb.calcT = 0f;
+
+                        VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                        VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                        VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
                         if (ValidateTag(lockTarget))
                             ReportTag(lockTarget);
@@ -134,22 +135,24 @@ namespace SharpzReborn.Mods
                     else
                     {
                         gunLocked = false;
+                        lockTarget = null;
                         VRRig.LocalRig.enabled = true;
                     }
                 }
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+
                     if (gunTarget && !gunTarget.IsLocal())
                     {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
                         if (PhotonNetwork.IsMasterClient)
                             AddInfected(GetPlayerFromVRRig(gunTarget));
-                        else
-                        {
-                            if (!VRRig.LocalRig.IsTagged()) return;
-                            gunLocked = true;
-                            lockTarget = gunTarget;
-                        }
+                        else if (!VRRig.LocalRig.IsTagged())
+                            return;
                     }
                 }
             }
@@ -158,6 +161,7 @@ namespace SharpzReborn.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
+                    lockTarget = null;
                     VRRig.LocalRig.enabled = true;
                 }
             }
@@ -188,40 +192,40 @@ namespace SharpzReborn.Mods
                         foreach (var vrrig in VRRigExtensions.ActiveRigs.Where(vrrig => !vrrig.IsTagged()))
                         {
                             VRRig.LocalRig.enabled = false;
-                                Vector3 position = vrrig.transform.position + RandomVector3();
+                            Vector3 position = vrrig.transform.position + RandomVector3();
 
-                                VRRig.LocalRig.transform.position = position;
-                                VRRig.LocalRig.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.transform.position = position;
+                            VRRig.LocalRig.transform.rotation = RandomQuaternion();
 
-                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                                VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
-                                VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
 
-                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                                VRRig.LocalRig.leftIndex.calcT = 0f;
-                                VRRig.LocalRig.leftMiddle.calcT = 0f;
-                                VRRig.LocalRig.leftThumb.calcT = 0f;
+                            VRRig.LocalRig.leftIndex.calcT = 0f;
+                            VRRig.LocalRig.leftMiddle.calcT = 0f;
+                            VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                VRRig.LocalRig.rightIndex.calcT = 0f;
-                                VRRig.LocalRig.rightMiddle.calcT = 0f;
-                                VRRig.LocalRig.rightThumb.calcT = 0f;
+                            VRRig.LocalRig.rightIndex.calcT = 0f;
+                            VRRig.LocalRig.rightMiddle.calcT = 0f;
+                            VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                             if (ValidateTag(vrrig))
                                 ReportTag(vrrig);
                         }
                     }
                     else
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Everyone is tagged!");
+                        NotifiLib.SendNotification($"{success} Everyone is tagged!");
                         VRRig.LocalRig.enabled = true;
                     }
                 }
@@ -230,52 +234,41 @@ namespace SharpzReborn.Mods
 
         public static void UntagGun()
         {
-            if (!GetGunInput(false))
-                return;
 
-            var gunData = RenderGun();
-            RaycastHit ray = gunData.Ray;
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
 
-            if (!GetGunInput(true) || ray.collider == null)
-                return;
-
-            VRRig gunTarget = ray.collider.GetComponentInParent<VRRig>();
-
-            if (gunTarget == null || gunTarget.IsLocal() || !gunTarget.IsTagged())
-                return;
-
-            if (PhotonNetwork.IsMasterClient)
-                RemoveInfected(GetPlayerFromVRRig(gunTarget));
-            else
-                NotifiLib.SendNotification(
-                    "<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && gunTarget.IsTagged())
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                            RemoveInfected(GetPlayerFromVRRig(gunTarget));
+                        else
+                            NotifiLib.SendNotification($"{fail} You are not master client.");
+                    }
+                }
+            }
         }
 
         public static void FlickTagGun()
         {
-            if (!GetGunInput(false))
-                return;
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
 
-            var gunData = RenderGun();
+                if (GetGunInput(true))
+                {
+                    GTPlayer.Instance.GetControllerTransform(false).position = NewPointer.transform.position;
 
-            if (!GetGunInput(true))
-                return;
-
-            GameObject newPointer = gunData.NewPointer;
-
-            if (newPointer == null)
-                return;
-
-            Transform controller = GTPlayer.Instance.GetControllerTransform(false);
-            Vector3 bodyPosition = GorillaTagger.Instance.bodyCollider.transform.position;
-            Vector3 targetPosition = newPointer.transform.position;
-
-            Vector3 offset = targetPosition - bodyPosition;
-
-            if (offset.sqrMagnitude > 16f)
-                targetPosition = bodyPosition + offset.normalized * 4f;
-
-            controller.position = targetPosition;
+                    if (Vector3.Distance(GTPlayer.Instance.GetControllerTransform(false).position, GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
+                        GTPlayer.Instance.GetControllerTransform(false).position = GorillaTagger.Instance.bodyCollider.transform.position + (GTPlayer.Instance.GetControllerTransform(false).position - GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
+                }
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using SharpzReborn.Classes;
 using SharpzReborn.Extensions;
@@ -87,5 +88,27 @@ namespace SharpzReborn.Mods
                 NotifiLib.SendNotification($"{ModInfoNotif("ANTI-MODERATOR")} {vrrig.GetName()} is a moderator, you have been disconnected.");
             }
         }
+
+        public static void EventReceived_AntiOculusReport(EventData data)
+        {
+            try
+            {
+                if (data.Code == 200)
+                {
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
+                    object[] args = (object[])((Hashtable)data.CustomData)[4];
+                    if (rpcName == "RPC_PlayHandTap" && (int)args[0] == 67)
+                    {
+                        VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
+                    }
+                }
+            }
+            catch { }
+        }
+        public static void EnableAntiOculusReport() =>
+            PhotonNetwork.NetworkingClient.EventReceived += EventReceived_AntiOculusReport;
+
+        public static void DisableAntiOculusReport() =>
+            PhotonNetwork.NetworkingClient.EventReceived -= EventReceived_AntiOculusReport;
     }
 }
