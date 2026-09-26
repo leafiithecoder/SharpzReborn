@@ -33,7 +33,7 @@ namespace SharpzReborn.Classes
                     GorillaTagger.Instance.tagHapticDuration / 2f);
 
             VRRig.LocalRig.PlayHandTapLocal(
-                    8,
+                    114,
                     pressingRightHand,
                     0.4f);
 

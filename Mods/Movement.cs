@@ -163,19 +163,20 @@ public abstract class Movement
     }
     public static void TeleportGun()
     {
-        if (!ControllerInputPoller.instance.rightGrab)
-            return;
-
-        (RaycastHit Ray, GameObject NewPointer) GunData    = RenderGun();
-        GameObject                              NewPointer = GunData.NewPointer;
-
-        if (ControllerInputPoller.TriggerFloat(XRNode.RightHand) > 0.5f && !previousTeleportTrigger)
+        if (GetGunInput(false))
         {
-            GTPlayer.Instance.TeleportTo(NewPointer.transform.position + Vector3.up, GTPlayer.Instance.transform.rotation);
-            GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
-        }
+            var GunData = RenderGun();
+            GameObject NewPointer = GunData.NewPointer;
 
-        previousTeleportTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand) > 0.5f;
+            if (GetGunInput(true) && !previousTeleportTrigger)
+            {
+                closePosition = Vector3.zero;
+                TeleportPlayer(NewPointer.transform.position + Vector3.up);
+                GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
+            }
+
+            previousTeleportTrigger = GetGunInput(true);
+        }
     }
 
 

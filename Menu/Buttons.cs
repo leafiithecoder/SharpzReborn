@@ -17,20 +17,21 @@ namespace SharpzReborn.Menu
     {
             public static ButtonInfo[] MainMods =
             [
-                new() { buttonText = "Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the settings." },
-                new() { buttonText = "Photon", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the room mods." },
+                new() { buttonText = "Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the settings menu." },
+                new() { buttonText = "Room", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the room mods menu." },
                 new() { buttonText = "Movement", method = () => SetCategory("Movement Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the movement mods." },
                 new() { buttonText = "Safety", method = () => SetCategory("Safety Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the safety mods." },
                 new() { buttonText = "Visual", method = () => SetCategory("Visual Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the visual mods." },
-                new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods." },
+                new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods menu." },
                 new() { buttonText = "Fun", method = () => SetCategory("Fun Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the fun mods." },
-                new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods." },
+                new() { buttonText = "Overpowered", method = () => SetCategory("Overpowered Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the OP mods." },
+                new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the advantage mods menu." },
                 new() { buttonText = "Important", method = () => SetCategory("Important Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the important mods." },
             ];
 
             public static ButtonInfo[] Settings =
             [
-                new() { buttonText = "Exit Settings", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Settings", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main menu page." },
                 new() { buttonText = "Menu Settings", method = () => SetCategory("Menu Settings"), mode = ButtonMode.Action, toolTip = "Opens the menu settings." },
                 new() { buttonText = "Movement Settings", method = () => SetCategory("Movement Settings"), mode = ButtonMode.Action, toolTip = "Opens the movement settings." },
             ];
@@ -38,21 +39,21 @@ namespace SharpzReborn.Menu
             private static readonly ButtonInfo[] MenuSettings =
             [
                 new() { buttonText = "Exit Menu Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main settings page." },
-                new() { buttonText = "Clear Notifs", method = Notifications.NotifiLib.ClearAllNotifications, mode = ButtonMode.Action, toolTip = "Clears all notifications."},
+                new() { buttonText = "Clear Notifications", method = Notifications.NotifiLib.ClearAllNotifications, mode = ButtonMode.Action, toolTip = "Clears all notifications from the menu."},
                 new() { buttonText = "Right Handed Menu", enableMethod = () => Menu.Settings.rightHanded = true, disableMethod = () => Menu.Settings.rightHanded = false, enabled = Menu.Settings.rightHanded, mode = ButtonMode.Toggle, toolTip = "Moves the menu to your right hand." },
                 new() { buttonText = "Disable Notifications", enableMethod = () => Menu.Settings.disableNotifications = true, disableMethod = () => Menu.Settings.disableNotifications = false, enabled = Menu.Settings.disableNotifications, mode = ButtonMode.Toggle, toolTip = "Disables notifications." },
                 new() { buttonText = "Disable FPS Counter", enableMethod = () => Menu.Settings.fpsCounter = false, disableMethod = () => Menu.Settings.fpsCounter = true, enabled = !Menu.Settings.fpsCounter, mode = ButtonMode.Toggle, toolTip = "Disables the FPS counter." },
                 new() { buttonText = "Disable Disconnect Button", enableMethod = () => Menu.Settings.disconnectButton = false, disableMethod = () => Menu.Settings.disconnectButton = true, enabled = !Menu.Settings.disconnectButton, mode = ButtonMode.Toggle, toolTip = "Disables the disconnect button." },
                 new() { buttonText = "Incremental Buttons", enableMethod = () => Menu.Settings.incrementalButtons = true, disableMethod = () => Menu.Settings.incrementalButtons = false, enabled = Menu.Settings.incrementalButtons, mode = ButtonMode.Toggle, toolTip = "Shows separate minus and plus controls for incremental settings." },
-                new() { buttonText = "Rounded Menu", enableMethod = () => Menu.Settings.roundedButtons = true, disableMethod = () => Menu.Settings.roundedButtons = false, enabled = Menu.Settings.roundedButtons, mode = ButtonMode.Toggle, toolTip = "Rounds the menu, buttons, search keyboard, and other menu objects." },
-                new() { buttonText = "Drop Menu", enableMethod = () =>Menu.Settings. dropMenu = true, disableMethod = () => Menu.Settings.dropMenu = false, enabled = Menu.Settings.dropMenu, mode = ButtonMode.Toggle, toolTip = "Makes the menu open while held and drop when released." },
+                new() { buttonText = "Rounded Menu", enableMethod = () => Menu.Settings.roundedButtons = true, disableMethod = () => Menu.Settings.roundedButtons = false, enabled = Menu.Settings.roundedButtons, mode = ButtonMode.Toggle, toolTip = "Rounds the menu, buttons, search keyboard, and other menu elements." },
+                new() { buttonText = "Drop Menu", enableMethod = () =>Menu.Settings. dropMenu = true, disableMethod = () => Menu.Settings.dropMenu = false, enabled = Menu.Settings.dropMenu, mode = ButtonMode.Toggle, toolTip = "Opens the menu while held and drops it when released." },
                 new() { buttonText = "Animated Menu", enableMethod = () => Menu.Settings.animateMenu = true, disableMethod = () => Menu.Settings.animateMenu = false, enabled = Menu.Settings.animateMenu, mode = ButtonMode.Toggle, toolTip = "Adds a simple grow and shrink animation to the menu." },
-                new() { buttonText = "Gradient Animation", incrementMethod = Menu.Settings.ChangeGradientAnimation, displayText = () => $"Gradient Animation [{Menu.Settings.GradientAnimationName}]", mode = ButtonMode.Incremental, toolTip = "Changes how animated gradients move." },
+                new() { buttonText = "Gradient Animation", incrementMethod = Menu.Settings.ChangeGradientAnimation, displayText = () => $"Gradient Animation [{Menu.Settings.GradientAnimationName}]", mode = ButtonMode.Incremental, toolTip = "Changes how the animated gradients move." },
                 new() { buttonText = "Rainbow Colours", enableMethod = () => Menu.Settings.SetRainbowColors(true), disableMethod = () => Menu.Settings.SetRainbowColors(false), enabled = Menu.Settings.rainbowColors, mode = ButtonMode.Toggle, toolTip = "Uses animated rainbow colours instead of the selected colour scheme." },
                 new() { buttonText = "Theme Changer", incrementMethod = Menu.Settings.ChangeTheme, displayText = () => $"Theme Changer [{Menu.Settings.ThemeName}]", mode = ButtonMode.Incremental, toolTip = "Changes the colour scheme used by the menu." },
                 new() { buttonText = "Outlines", enableMethod = () => Menu.Settings.outlines = true, disableMethod = () => Menu.Settings.outlines = false, enabled = Menu.Settings.outlines, mode = ButtonMode.Toggle, toolTip = "Adds outlines around the menu and its buttons." },
                 new() { buttonText = "Button Gradients", enableMethod = () => Menu.Settings.buttonGradients = true, disableMethod = () => Menu.Settings.buttonGradients = false, enabled = Menu.Settings.buttonGradients, mode = ButtonMode.Toggle, toolTip = "Toggles spatial gradients on buttons." },
-                new() { buttonText = "Vertical Gradients", enableMethod = () => Menu.Settings.verticalButtonGradients = true, disableMethod = () => Menu.Settings.verticalButtonGradients = false, enabled = Menu.Settings.verticalButtonGradients, mode = ButtonMode.Toggle, toolTip = "Changes button gradients between horizontal and vertical." },
+                new() { buttonText = "Vertical Gradients", enableMethod = () => Menu.Settings.verticalButtonGradients = true, disableMethod = () => Menu.Settings.verticalButtonGradients = false, enabled = Menu.Settings.verticalButtonGradients, mode = ButtonMode.Toggle, toolTip = "Switches button gradients between horizontal and vertical." },
                 new() { buttonText = "Top Page Buttons", enableMethod = () => Menu.Settings.pageButtonsAtTop = true, disableMethod = () => Menu.Settings.pageButtonsAtTop = false, enabled = Menu.Settings.pageButtonsAtTop, mode = ButtonMode.Toggle, toolTip = "Moves the page buttons into the first two normal button slots." },
             ];
 
@@ -65,17 +66,17 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Grip Speed Boost", enableMethod = () => gripSpeedBoost = true, disableMethod = () => gripSpeedBoost = false, mode = ButtonMode.Toggle, toolTip = "Binds the speed boost mod to your grip." },
                 new() { buttonText = "Trigger Speed Boost", enableMethod = () => triggerSpeedBoost = true, disableMethod = () => triggerSpeedBoost = false, mode = ButtonMode.Toggle, toolTip = "Binds the speed boost mod to your trigger." },
                 new() { buttonText = "Trigger Platforms", enableMethod = () => triggerPlatforms = true, disableMethod = () => triggerPlatforms = false, mode = ButtonMode.Toggle, toolTip = "Spawns platforms on your hands when you press trigger." },
-                new() { buttonText = "Non-Sticky Platforms", enableMethod = () => nonStickyPlatforms = true, disableMethod = () => nonStickyPlatforms = false, mode = ButtonMode.Toggle, toolTip = "Makes your hands not stick to the platforms in the platforms mod." },
+                new() { buttonText = "Non-Sticky Platforms", enableMethod = () => nonStickyPlatforms = true, disableMethod = () => nonStickyPlatforms = false, mode = ButtonMode.Toggle, toolTip = "Prevents your hands from sticking to platforms." },
                 new() { buttonText = "Constant Noclip", enableMethod = () => constantNoclip = true, disableMethod = () => constantNoclip = false, mode = ButtonMode.Toggle, toolTip = "Keeps the noclip mod always on." },
                 new() { buttonText = "Grip Noclip", enableMethod = () => gripNoclip = true, disableMethod = () => gripNoclip = false, mode = ButtonMode.Toggle, toolTip = "Binds the noclip mod to your grip." },
             ];
 
             public static ButtonInfo[] RoomMods =
             [
-                new() { buttonText = "Exit Photon Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Photon Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main menu page." },
                 new() { buttonText = "Disconnect", method = () => NetworkSystem.Instance.ReturnToSinglePlayer(), mode = ButtonMode.Action, toolTip = "Disconnects you from the current room." },
                 new() { buttonText = "Join Last Room", method = Room.JoinLastRoom, mode = ButtonMode.Action, toolTip = "Joins the last room you were in." },
-                new() { buttonText = "Join Random Pub", method = Room.JoinRandomRoom, mode = ButtonMode.Action, toolTip = "Joins a random available room." },
+                new() { buttonText = "Join Random Public Room", method = Room.JoinRandomRoom, mode = ButtonMode.Action, toolTip = "Joins a random available public room." },
                 new() { buttonText = "Reconnect", method = Room.Reconnect, mode = ButtonMode.Action, toolTip = "Reconnects you to the Photon server." },
                 new() { buttonText = "Reconnect & Rejoin", method = Room.ReconnectAndRejoin, mode = ButtonMode.Action, toolTip = "Reconnects to Photon and attempts to rejoin your previous room." },
                 new() { buttonText = "Join Menu Room", method = Room.JoinMenuRoom, mode = ButtonMode.Action, toolTip = "Joins the BRANDED menu room." },
@@ -85,48 +86,48 @@ namespace SharpzReborn.Menu
 
             public static ButtonInfo[] QueueRoomMods =
             [
-                new() { buttonText = "Exit Queue Rooms", method = () => SetCategory("Room"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Queue Room [MODS]", method =() => Room.QueueJoinRoom("mods"), mode = ButtonMode.Action, toolTip = "Queues the room MODS." },
-                new() { buttonText = "Queue Room [MOD]", method =() => Room.QueueJoinRoom("mod"), mode = ButtonMode.Action, toolTip = "Queues the room MOD." },
-                new() { buttonText = "Queue Room [MODDER]", method =() => Room.QueueJoinRoom("modder"), mode = ButtonMode.Action, toolTip = "Queues the room MODDER." },
-                new() { buttonText = "Queue Room [BOT]", method =() => Room.QueueJoinRoom("bot"), mode = ButtonMode.Action, toolTip = "Queues the room BOT." },
-                new() { buttonText = "Queue Room [DAISY09]", method =() => Room.QueueJoinRoom("daisy09"), mode = ButtonMode.Action, toolTip = "Queues the room DAISY09." },
-                new() { buttonText = "Queue Room [DAISY]", method =() => Room.QueueJoinRoom("daisy"), mode = ButtonMode.Action, toolTip = "Queues the room DAISY." },
-                new() { buttonText = "Queue Room [PBBV]", method = () => Room.QueueJoinRoom("pbbv"), mode = ButtonMode.Action, toolTip = "Queues the room PBBV." },
-                new() { buttonText = "Queue Room [RUN]", method = () => Room.QueueJoinRoom("run"), mode = ButtonMode.Action, toolTip = "Queues the room RUN." },
-                new() { buttonText = "Queue Room [J3VU]", method = () => Room.QueueJoinRoom("j3vu"), mode = ButtonMode.Action, toolTip = "Queues the room J3VU." },
-                new() { buttonText = "Queue Room [GHOST]", method = () => Room.QueueJoinRoom("ghost"), mode = ButtonMode.Action, toolTip = "Queues the room GHOST." },
-                new() { buttonText = "Queue Room [TIPTOE]", method = () => Room.QueueJoinRoom("tiptoe"), mode = ButtonMode.Action, toolTip = "Queues the room TIPTOE." },
-                new() { buttonText = "Queue Room [SREN17]", method = () => Room.QueueJoinRoom("sren17"), mode = ButtonMode.Action, toolTip = "Queues the room SREN17." },
-                new() { buttonText = "Queue Room [SREN18]", method = () => Room.QueueJoinRoom("sren18"), mode = ButtonMode.Action, toolTip = "Queues the room SREN18." },
-                new() { buttonText = "Queue Room [SREN16]", method = () => Room.QueueJoinRoom("sren16"), mode = ButtonMode.Action, toolTip = "Queues the room SREN16." },
-                new() { buttonText = "Queue Room [HELP]", method = () => Room.QueueJoinRoom("help"), mode = ButtonMode.Action, toolTip = "Queues the room HELP." },
-                new() { buttonText = "Queue Room [HIDE]", method = () => Room.QueueJoinRoom("hide"), mode = ButtonMode.Action, toolTip = "Queues the room HIDE." },
-                new() { buttonText = "Queue Room [H3LP]", method = () => Room.QueueJoinRoom("h3lp"), mode = ButtonMode.Action, toolTip = "Queues the room H3LP." },
-                new() { buttonText = "Queue Room [BANSHEE]", method = () => Room.QueueJoinRoom("banshee"), mode = ButtonMode.Action, toolTip = "Queues the room BANSHEE." },
-                new() { buttonText = "Queue Room [PAUL]", method = () => Room.QueueJoinRoom("paul"), mode = ButtonMode.Action, toolTip = "Queues the room PAUL." },
-                new() { buttonText = "Queue Room [ECHO]", method = () => Room.QueueJoinRoom("echo"), mode = ButtonMode.Action, toolTip = "Queues the room ECHO." },
-                new() { buttonText = "Queue Room [WARNING]", method = () => Room.QueueJoinRoom("warning"), mode = ButtonMode.Action, toolTip = "Queues the room WARNING." },
+                new() { buttonText = "Exit Queue Rooms", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the room mods page of the menu." },
+                new() { buttonText = "Queue Room [MODS]", method =() => Room.QueueJoinRoom("mods"), mode = ButtonMode.Action, toolTip = "Joins the MODS queue room." },
+                new() { buttonText = "Queue Room [MOD]", method =() => Room.QueueJoinRoom("mod"), mode = ButtonMode.Action, toolTip = "Joins the MOD queue room." },
+                new() { buttonText = "Queue Room [MODDER]", method =() => Room.QueueJoinRoom("modder"), mode = ButtonMode.Action, toolTip = "Joins the MODDER queue room." },
+                new() { buttonText = "Queue Room [BOT]", method =() => Room.QueueJoinRoom("bot"), mode = ButtonMode.Action, toolTip = "Joins the BOT queue room." },
+                new() { buttonText = "Queue Room [DAISY09]", method =() => Room.QueueJoinRoom("daisy09"), mode = ButtonMode.Action, toolTip = "Joins the DAISY09 queue room." },
+                new() { buttonText = "Queue Room [DAISY]", method =() => Room.QueueJoinRoom("daisy"), mode = ButtonMode.Action, toolTip = "Joins the DAISY queue room." },
+                new() { buttonText = "Queue Room [PBBV]", method = () => Room.QueueJoinRoom("pbbv"), mode = ButtonMode.Action, toolTip = "Joins the PBBV queue room." },
+                new() { buttonText = "Queue Room [RUN]", method = () => Room.QueueJoinRoom("run"), mode = ButtonMode.Action, toolTip = "Joins the RUN queue room." },
+                new() { buttonText = "Queue Room [J3VU]", method = () => Room.QueueJoinRoom("j3vu"), mode = ButtonMode.Action, toolTip = "Joins the J3VU queue room." },
+                new() { buttonText = "Queue Room [GHOST]", method = () => Room.QueueJoinRoom("ghost"), mode = ButtonMode.Action, toolTip = "Joins the GHOST queue room." },
+                new() { buttonText = "Queue Room [TIPTOE]", method = () => Room.QueueJoinRoom("tiptoe"), mode = ButtonMode.Action, toolTip = "Joins the TIPTOE queue room." },
+                new() { buttonText = "Queue Room [SREN17]", method = () => Room.QueueJoinRoom("sren17"), mode = ButtonMode.Action, toolTip = "Joins the SREN17 queue room." },
+                new() { buttonText = "Queue Room [SREN18]", method = () => Room.QueueJoinRoom("sren18"), mode = ButtonMode.Action, toolTip = "Joins the SREN18 queue room." },
+                new() { buttonText = "Queue Room [SREN16]", method = () => Room.QueueJoinRoom("sren16"), mode = ButtonMode.Action, toolTip = "Joins the SREN16 queue room." },
+                new() { buttonText = "Queue Room [HELP]", method = () => Room.QueueJoinRoom("help"), mode = ButtonMode.Action, toolTip = "Joins the HELP queue room." },
+                new() { buttonText = "Queue Room [HIDE]", method = () => Room.QueueJoinRoom("hide"), mode = ButtonMode.Action, toolTip = "Joins the HIDE queue room." },
+                new() { buttonText = "Queue Room [H3LP]", method = () => Room.QueueJoinRoom("h3lp"), mode = ButtonMode.Action, toolTip = "Joins the H3LP queue room." },
+                new() { buttonText = "Queue Room [BANSHEE]", method = () => Room.QueueJoinRoom("banshee"), mode = ButtonMode.Action, toolTip = "Joins the BANSHEE queue room." },
+                new() { buttonText = "Queue Room [PAUL]", method = () => Room.QueueJoinRoom("paul"), mode = ButtonMode.Action, toolTip = "Joins the PAUL queue room." },
+                new() { buttonText = "Queue Room [ECHO]", method = () => Room.QueueJoinRoom("echo"), mode = ButtonMode.Action, toolTip = "Joins the ECHO queue room." },
+                new() { buttonText = "Queue Room [WARNING]", method = () => Room.QueueJoinRoom("warning"), mode = ButtonMode.Action, toolTip = "Joins the WARNING queue room." },
             ];
 
             public static ButtonInfo[] MovementMods =
             [
-                new() { buttonText = "Exit Movement Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Movement Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main menu page." },
                 new() { buttonText = "Platforms [G]", method = Mods.Movement.Platforms, mode = ButtonMode.Toggle, toolTip = "Spawns platforms on your hands when you press grip." },
                 new() { buttonText = "Fly [A]", method = Mods.Movement.Fly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A." },
                 new() { buttonText = "Hand Fly [A]", method = Mods.Movement.HandFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward in the direction your hand is pointing while holding A." },
                 new() { buttonText = "Noclip Fly [A]", method = Mods.Movement.NoclipFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A and lets you phase through walls." },
                 new() { buttonText = "Trigger Fly [T]", method = Mods.Movement.TriggerFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding your right trigger." },
                 new() { buttonText = "WASD Fly [WASD]", enableMethod = Mods.Movement.EnableWASDFly, method = Mods.Movement.WASDFly, disableMethod = () => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), mode = ButtonMode.Toggle, toolTip = "Moves you around with WASD." },
-                new() { buttonText = "Teleport Gun", method = Mods.Movement.TeleportGun, mode = ButtonMode.Toggle, toolTip = "Teleports you to wherever your pointer is when you press trigger." },
+                new() { buttonText = "Teleport Gun", method = Mods.Movement.TeleportGun, mode = ButtonMode.Toggle, toolTip = "Teleports you to the pointer position when you press the trigger." },
                 new() { buttonText = "Speed Boost", method = Mods.Movement.SpeedBoost, mode = ButtonMode.Toggle, toolTip = "Increases your movement speed." },
                 new() { buttonText = "Noclip [T]", method = Mods.Movement.Noclip, mode = ButtonMode.Toggle, toolTip = "Allows you to move through walls." },
                 new() { buttonText = "Steam Long Arms", enableMethod = Mods.Movement.EnableSteamLongArms, disableMethod = Mods.Movement.DisableSteamLongArms, method = Mods.Movement.EnableSteamLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates SteamVR's world scale to make your arms longer." },
                 new() { buttonText = "Sticky Hands", enableMethod = Mods.Movement.StickyHands, disableMethod = Mods.Movement.DisableStickyHands, method = Mods.Movement.StickyHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands sticky." },
-                new() { buttonText = "Slide Control", enableMethod = Mods.Movement.EnableSlideControl, disableMethod = Mods.Movement.DisableSlideControl, mode = ButtonMode.Toggle, toolTip = "Allows you to be able to control your sliding." },
-                new() { buttonText = "Moon Walk", method = Mods.Movement.LowGravity, mode = ButtonMode.Toggle, toolTip = "Reduces the gravity on you." },
+                new() { buttonText = "Slide Control", enableMethod = Mods.Movement.EnableSlideControl, disableMethod = Mods.Movement.DisableSlideControl, mode = ButtonMode.Toggle, toolTip = "Allows you to control your sliding." },
+                new() { buttonText = "Moon Walk", method = Mods.Movement.LowGravity, mode = ButtonMode.Toggle, toolTip = "Reduces the gravity affecting you." },
                 new() { buttonText = "No Gravity", method = Mods.Movement.ZeroGravity, mode = ButtonMode.Toggle, toolTip = "Removes gravity from you." },
-                new() { buttonText = "Jupiter Walk", method = Mods.Movement.HighGravity, mode = ButtonMode.Toggle, toolTip = "Increases the gravity on you." },
+                new() { buttonText = "Jupiter Walk", method = Mods.Movement.HighGravity, mode = ButtonMode.Toggle, toolTip = "Increases the gravity affecting you." },
                 new() { buttonText = "Up And Down", method = Mods.Movement.UpAndDown, mode = ButtonMode.Toggle, toolTip = "Moves you up and down." },
                 new() { buttonText = "Left And Right", method = Mods.Movement.LeftAndRight, mode = ButtonMode.Toggle, toolTip = "Moves you left and right." },
                 new() { buttonText = "Forwards And Backwards", method = Mods.Movement.ForwardsAndBackwards, mode = ButtonMode.Toggle, toolTip = "Moves you forwards and backwards." },
@@ -137,25 +138,25 @@ namespace SharpzReborn.Menu
 
             public static ButtonInfo[] SafetyMods =
             [
-                new() { buttonText = "Exit Safety Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Safety Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
                 new() { buttonText = "Anti Report [Disconnect]", method = Safety.AntiReportDisconnect, mode = ButtonMode.Toggle, toolTip = "Disconnects when you are reported." },
                 new() { buttonText = "Anti Moderator [Disconnect]", method = Safety.AntiModerator, mode = ButtonMode.Toggle, toolTip = "Disconnects when there is a moderator in the lobby." },
                 new() { buttonText = "No Finger Movement", method = Safety.NoFingerMovement, mode = ButtonMode.Toggle, toolTip = "Disables finger movement." },
                 new() { buttonText = "Flush RPCs", method = Safety.FlushRPCs, mode = ButtonMode.Action, toolTip = "Flushes RPCs." },
-                new() { buttonText = "Anti Report [Quest]", enableMethod = Safety.EnableAntiOculusReport, disableMethod = Safety.DisableAntiOculusReport, toolTip = "Disconnects when you get reported using the Meta Quest report menu."},
+                new() { buttonText = "Anti-Report [Quest]", enableMethod = Safety.EnableAntiOculusReport, disableMethod = Safety.DisableAntiOculusReport, toolTip = "Disconnects when you are reported through the Meta Quest report menu."},
             ];
 
             public static ButtonInfo[] VisualMods =
             [
-                new() { buttonText = "Exit Visual Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Bone ESP", method = Visuals.BoneESP, mode = ButtonMode.Toggle, toolTip = "Shows player bones." },
-                new() { buttonText = "Tracers", method = Visuals.Tracers, disableMethod =() => {Visuals.isLineRenderQueued = false; Visuals.ClearLinePool(); }, mode = ButtonMode.Toggle, toolTip = "Shows lines from you to other players." },
+                new() { buttonText = "Exit Visual Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+                new() { buttonText = "Bone ESP", method = Visuals.BoneESP, mode = ButtonMode.Toggle, toolTip = "Displays other players’ bones." },
+                new() { buttonText = "Tracers", method = Visuals.Tracers, disableMethod =() => {Visuals.isLineRenderQueued = false; Visuals.ClearLinePool(); }, mode = ButtonMode.Toggle, toolTip = "Draws lines from you to other players." },
             ];
 
             public static ButtonInfo[] PlayerMods =
             [
-                new() { buttonText = "Exit Player Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Fix Head", method = Player.FixHead, mode = ButtonMode.Action, toolTip = "Fixes any bugs with your head." },
+                new() { buttonText = "Exit Player Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+                new() { buttonText = "Fix Head", method = Player.FixHead, mode = ButtonMode.Action, toolTip = "Fixes issues with your head." },
                 new() { buttonText = "Grab Rig [G]", method = Player.GrabRig, mode = ButtonMode.Toggle, toolTip = "Lets you grab your rig." },
                 new() { buttonText = "Ghost [A]", method = Player.Ghost, mode = ButtonMode.Toggle, toolTip = "Makes you a ghost." },
                 new() { buttonText = "Invisible [B]", method = Player.Invisible, mode = ButtonMode.Toggle, toolTip = "Makes you invisible." },
@@ -176,35 +177,58 @@ namespace SharpzReborn.Menu
 
             public static ButtonInfo[] AdvantageMods =
             [
-                new() { buttonText = "Exit Advantage Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
-                new() { buttonText = "Tag Self", method = Advantages.TagSelf, mode = ButtonMode.Action, toolTip = "Adds the tag state to you." },
-                new() { buttonText = "Tag Gun", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag anyone when tagged with a gun." },
-                new() { buttonText = "Tag All", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone." },
-                new() { buttonText = "Untag All [M]", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tag state from everyone." },
-                new() { buttonText = "Untag Gun [M]", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tag state from anyone with a gun." },
-                new() { buttonText = "Disable Tags [M]", method = Advantages.DisableTags, mode = ButtonMode.Toggle, disableMethod = Notifications.NotifiLib.ClearAllNotifications, toolTip = "Constantly removes the tag state from everyone." },
+                new() { buttonText = "Exit Advantage Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+                new() { buttonText = "Tag Self", method = Advantages.TagSelf, mode = ButtonMode.Toggle, toolTip = "Makes you tagged." },
+                new() { buttonText = "Tag Gun", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag other players while you are tagged using a gun." },
+                new() { buttonText = "Tag All", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone in the room." },
+                new() { buttonText = "Untag All [M]", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tagged state from everyone." },
+                new() { buttonText = "Untag Gun [M]", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tagged state from the player you target with the gun." },
+                new() { buttonText = "Disable Tags [M]", method = Advantages.DisableTags, mode = ButtonMode.Toggle, disableMethod = Notifications.NotifiLib.ClearAllNotifications, toolTip = "Continuously removes the tagged state from everyone." },
                 new() { buttonText = "Flick Tag Gun", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
             ];
 
             public static ButtonInfo[] ImportantMods =
             [
-                new() { buttonText = "Exit Important Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Important Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
                 new() { buttonText = "Crash", method = Application.Quit, mode = ButtonMode.Action, toolTip = "Closes the game." },
+            ];
+
+            public static ButtonInfo[] OpMods =
+            [
+                new() { buttonText = "Exit Overpowered Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+                new() { buttonText = "VIM Kick Gun", method = OP.VIMKickGun, mode = ButtonMode.Toggle, toolTip = "Kicks the player you target. [VIM]" },
+                new() { buttonText = "VIM Kick All", method = OP.VIMKickAll, mode = ButtonMode.Toggle, toolTip = "Kicks everyone in the room. [VIM]" },
+                new() { buttonText = "Slow Gun [M]", method = OP.SlowGun, mode = ButtonMode.Toggle, toolTip = "Slows the player you target." },
+                new() { buttonText = "Vibrate Gun [M]", method = OP.VibrateGun, mode = ButtonMode.Toggle, toolTip = "Vibrates the player you target." },
+                new() { buttonText = "Rock To Infection", method = OP.TagToInfection, mode = ButtonMode.Action, toolTip = "Changes the game mode." },
+                new() { buttonText = "Infection To Rock", method = OP.InfectionToTag, mode = ButtonMode.Action, toolTip = "Changes the game mode." },
+                new() { buttonText = "Spaz Ropes", method = OP.SpazAllRopes, mode = ButtonMode.Toggle, toolTip = "Rapidly moves all ropes." },
+                new() { buttonText = "Spaz Grabbed Ropes", method = OP.SpazGrabbedRopes, mode = ButtonMode.Toggle, toolTip = "Rapidly moves grabbed ropes." },
+                new() { buttonText = "Spaz Rope Gun", method = OP.SpazRopeGun, mode = ButtonMode.Toggle, toolTip = "Rapidly moves the rope you target." },
+                new() { buttonText = "Fling Rope Gun", method = OP.FlingRopeGun, mode = ButtonMode.Toggle, toolTip = "Flings the rope you target." },
+                new() { buttonText = "Fling All Ropes Gun", method = OP.FlingAllRopesGun, mode = ButtonMode.Toggle, toolTip = "Flings all ropes." },
+                new() { buttonText = "Delay Ban Gun [D?]", method = OP.DelayBanGun, mode = ButtonMode.Toggle, toolTip = "Delays bans on targeted players."},
             ];
 
             public static ButtonInfo[] FunMods =
             [
-                new() { buttonText = "Exit Fun Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main page of the menu." },
+                new() { buttonText = "Exit Fun Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
                 new() { buttonText = "Water Bending [R]", method = Fun.WaterR, mode = ButtonMode.Toggle, toolTip = "Spawns water splashes at your right hand." },
                 new() { buttonText = "Water Bending [L]", method = Fun.WaterL, mode = ButtonMode.Toggle, toolTip = "Spawns water splashes at your left hand." },
-                new() { buttonText = "Water Splash Gun", method = Fun.WaterSplashGun, mode = ButtonMode.Toggle, toolTip = "Spawns water splashes wherever your gun desires." },
-                new() { buttonText = "Waterbender Gun", method = Fun.GiveWaterBendingGun, mode = ButtonMode.Toggle, toolTip = "Allows you to make anyone a waterbender." },
-                new() { buttonText = "Max Quest Score", method =() => SetScore(99999), mode = ButtonMode.Action, toolTip = "Sets your quest score to the maximum value." },
-                new() { buttonText = "No Quest Score", method =() => SetScore(0), mode = ButtonMode.Action, toolTip = "Sets your quest score to 0." },
-                new() { buttonText = "Lowercase Name", method =() => ChangeName(GorillaComputer.instance.currentName.ToLower()), mode = ButtonMode.Action, toolTip = "Lowercases your name."}
+                new() { buttonText = "Water Splash Gun", method = Fun.WaterSplashGun, mode = ButtonMode.Toggle, toolTip = "Creates water splashes wherever your gun points." },
+                new() { buttonText = "Give Waterbending Gun", method = Fun.GiveWaterBendingGun, mode = ButtonMode.Toggle, toolTip = "Allows you to make other players waterbenders." },
+                new() { buttonText = "Water Splash Aura", method = Fun.WaterSplashAura, mode = ButtonMode.Toggle, toolTip = "Creates water splashes randomly around you." },
+                new() { buttonText = "Water Splash Hands", method = Fun.WaterSplashHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands create water splashes." },
+                new() { buttonText = "Water Splash Walk", method = Fun.WaterSplashWalk, mode = ButtonMode.Toggle, toolTip = "Creates water splashes as you walk." },
+                new() { buttonText = "Water Splash On Touch", method = Fun.WaterSplashOnTouch, mode = ButtonMode.Toggle, toolTip = "Creates water splashes on players you touch." },
+                new() { buttonText = "Give Water Splash Hands Gun", method = Fun.GiveWaterSplashHandsGun, mode = ButtonMode.Toggle, toolTip = "Creates water splashes on everyone’s hands." },
+                new() { buttonText = "Water Splash All", method = Fun.WaterSplashAll, mode = ButtonMode.Toggle, toolTip = "Makes other players create water splashes on their hands." },
+                new() { buttonText = "Max Quest Score", method =() => SetScore(99999), mode = ButtonMode.Action, toolTip = "Sets your Quest score to the maximum value." },
+                new() { buttonText = "Reset Quest Score", method =() => SetScore(0), mode = ButtonMode.Action, toolTip = "Sets your Quest score to 0." },
+                new() { buttonText = "Lowercase Name", method =() => ChangeName(GorillaComputer.instance.currentName.ToLower()), mode = ButtonMode.Action, toolTip = "Changes your name to lowercase. This is not visible on the leaderboard."}
             ];
 
-        public static ButtonCategory[] Categories =
+            public static ButtonCategory[] Categories =
             [
                 new() { name = "Main", buttons = MainMods },
                 new() { name = "Settings", buttons = Settings },
@@ -218,8 +242,9 @@ namespace SharpzReborn.Menu
                 new() { name = "Player Mods", buttons = PlayerMods },
                 new() { name = "Advantage Mods", buttons = AdvantageMods },
                 new() { name = "Fun Mods", buttons = FunMods },
+                new() { name = "Overpowered Mods", buttons = OpMods},
                 new() { name = "Important Mods", buttons = ImportantMods },
-        ];
+            ];
 
 
         private static readonly Dictionary<string, ButtonCategory> CategoryLookup = BuildCategoryLookup();

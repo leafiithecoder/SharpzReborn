@@ -33,5 +33,10 @@ namespace SharpzReborn.Classes
 
         public string GetDisplayText() =>
                 displayText?.Invoke() ?? overlapText ?? buttonText;
+
+        public void SetEnabled(bool value)
+        {
+            enabled = value;
+        }
     }
 }

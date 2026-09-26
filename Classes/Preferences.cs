@@ -27,7 +27,7 @@ public static class Preferences
     private static readonly string SavePath =
             Path.Combine(
                     Paths.ConfigPath,
-                    Constants.Guid + ".json");
+                    PluginInfo.Guid + ".json");
 
     private static readonly List<SavedField> SavedFields =
             FindSavedFields();
@@ -86,7 +86,7 @@ public static class Preferences
             catch (Exception exc)
             {
                 Debug.LogError(
-                        $"{Constants.Name} // Failed to apply saved state for {button.buttonText}: {exc}");
+                        $"{PluginInfo.Name} // Failed to apply saved state for {button.buttonText}: {exc}");
             }
         }
 
@@ -127,7 +127,7 @@ public static class Preferences
         catch (Exception exc)
         {
             Debug.LogError(
-                    $"{Constants.Name} // Failed to save preferences: {exc}");
+                    $"{PluginInfo.Name} // Failed to save preferences: {exc}");
         }
     }
 
@@ -163,7 +163,7 @@ public static class Preferences
         catch (Exception exc)
         {
             Debug.LogError(
-                    $"{Constants.Name} // Failed to read preferences: {exc}");
+                    $"{PluginInfo.Name} // Failed to read preferences: {exc}");
 
             return new SaveData();
         }
@@ -231,7 +231,7 @@ public static class Preferences
             catch (Exception exc)
             {
                 Debug.LogError(
-                        $"{Constants.Name} // Failed to load saved setting {savedField.key}: {exc}");
+                        $"{PluginInfo.Name} // Failed to load saved setting {savedField.key}: {exc}");
             }
         }
 
@@ -252,7 +252,7 @@ public static class Preferences
                 if (method == null)
                 {
                     Debug.LogError(
-                            $"{Constants.Name} // SavedSetting callback {callback.type.FullName}.{callback.methodName} does not exist.");
+                            $"{PluginInfo.Name} // SavedSetting callback {callback.type.FullName}.{callback.methodName} does not exist.");
 
                     continue;
                 }
@@ -264,7 +264,7 @@ public static class Preferences
             catch (Exception exc)
             {
                 Debug.LogError(
-                        $"{Constants.Name} // Failed applying SavedSetting callback {callback.type.FullName}.{callback.methodName}: {exc}");
+                        $"{PluginInfo.Name} // Failed applying SavedSetting callback {callback.type.FullName}.{callback.methodName}: {exc}");
             }
         }
     }
@@ -325,7 +325,7 @@ public static class Preferences
             catch (Exception exc)
             {
                 Debug.LogError(
-                        $"{Constants.Name} // Failed saving setting {savedField.key}: {exc}");
+                        $"{PluginInfo.Name} // Failed saving setting {savedField.key}: {exc}");
             }
         }
     }
@@ -392,7 +392,7 @@ public static class Preferences
                     field.IsInitOnly)
                 {
                     Debug.LogWarning(
-                            $"{Constants.Name} // SavedSetting cannot be used on readonly field {type.FullName}.{field.Name}.");
+                            $"{PluginInfo.Name} // SavedSetting cannot be used on readonly field {type.FullName}.{field.Name}.");
 
                     continue;
                 }
@@ -407,7 +407,7 @@ public static class Preferences
                 if (!keys.Add(key))
                 {
                     Debug.LogError(
-                            $"{Constants.Name} // Duplicate SavedSetting key {key}.");
+                            $"{PluginInfo.Name} // Duplicate SavedSetting key {key}.");
 
                     continue;
                 }

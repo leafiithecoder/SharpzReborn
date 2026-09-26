@@ -8,7 +8,7 @@ namespace SharpzReborn.Patches
 {
     public abstract class PatchHandler
     {
-        public const string InstanceId = Constants.Guid;
+        public const string InstanceId = PluginInfo.Guid;
 
         private static Harmony instance;
         public static  bool    IsPatched   { get; private set; }
@@ -19,7 +19,7 @@ namespace SharpzReborn.Patches
             if (IsPatched)
                 return;
 
-            instance ??= new Harmony(Constants.Guid);
+            instance ??= new Harmony(PluginInfo.Guid);
 
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes()
                                           .Where(t => t is { IsClass: true, } && t.GetCustomAttribute<HarmonyPatch>() != null))

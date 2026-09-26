@@ -6,11 +6,11 @@ using SharpzReborn.Patches;
 
 namespace SharpzReborn;
 
-[Description(Constants.Description)]
+[Description(PluginInfo.Description)]
 [BepInPlugin(
-        Constants.Guid,
-        Constants.Name,
-        Constants.Version)]
+        PluginInfo.Guid,
+        PluginInfo.Name,
+        PluginInfo.Version)]
 public class Plugin : BaseUnityPlugin
 {
     private void Awake()

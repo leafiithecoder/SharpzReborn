@@ -1,6 +1,6 @@
 ﻿namespace SharpzReborn
 {
-    public abstract class Constants
+    public abstract class PluginInfo
     {
         public const string Guid = "sharpz.sharpzreborn";
         public const string Name = "Sharpz Reborn V3";

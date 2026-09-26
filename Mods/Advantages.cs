@@ -16,11 +16,16 @@ namespace SharpzReborn.Mods
     {
         public static void TagSelf()
         {
-
+            static void TurnOff()
+            {
+                Buttons.GetIndex("Tag Self").SetEnabled(false);
+                RecreateMenu();
+            }
             if (PhotonNetwork.IsMasterClient)
             {
                 AddInfected(PhotonNetwork.LocalPlayer);
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
+                TurnOff();
             }
             else
             {
@@ -28,6 +33,7 @@ namespace SharpzReborn.Mods
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
                     VRRig.LocalRig.enabled = true;
+                    TurnOff();
                 }
                 else
                 {
@@ -37,21 +43,14 @@ namespace SharpzReborn.Mods
                                     + r.LatestVelocity().magnitude)
                         .FirstOrDefault();
 
-                    if (!rig.IsTagged()) return;
-                    VRRig.LocalRig.enabled = false;
-                    if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
-                    Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
-                    VRRig.LocalRig.transform.rotation = rotation;
+                        if (!rig.IsTagged()) return;
+                        VRRig.LocalRig.enabled = false;
+                        if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
 
-                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                    VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
-                    VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
-
-                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
                 }
             }
         }
+
         public static void UntagAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
@@ -101,33 +100,7 @@ namespace SharpzReborn.Mods
                     if (!lockTarget.IsTagged())
                     {
                         VRRig.LocalRig.enabled = false;
-
-                        Vector3 position = lockTarget.transform.position + RandomVector3();
-
-                        VRRig.LocalRig.transform.position = position;
-
-                        VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                        VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
-                        VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
-
-                        VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
-
-                        VRRig.LocalRig.leftIndex.calcT = 0f;
-                        VRRig.LocalRig.leftMiddle.calcT = 0f;
-                        VRRig.LocalRig.leftThumb.calcT = 0f;
-
-                        VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                        VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                        VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
-
-                        VRRig.LocalRig.rightIndex.calcT = 0f;
-                        VRRig.LocalRig.rightMiddle.calcT = 0f;
-                        VRRig.LocalRig.rightThumb.calcT = 0f;
-
-                        VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                        VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                        VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                        VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
 
                         if (ValidateTag(lockTarget))
                             ReportTag(lockTarget);
@@ -135,24 +108,22 @@ namespace SharpzReborn.Mods
                     else
                     {
                         gunLocked = false;
-                        lockTarget = null;
                         VRRig.LocalRig.enabled = true;
                     }
                 }
-
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-
                     if (gunTarget && !gunTarget.IsLocal())
                     {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-
                         if (PhotonNetwork.IsMasterClient)
                             AddInfected(GetPlayerFromVRRig(gunTarget));
-                        else if (!VRRig.LocalRig.IsTagged())
-                            return;
+                        else
+                        {
+                            if (!VRRig.LocalRig.IsTagged()) return;
+                            gunLocked = true;
+                            lockTarget = gunTarget;
+                        }
                     }
                 }
             }
@@ -161,7 +132,6 @@ namespace SharpzReborn.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    lockTarget = null;
                     VRRig.LocalRig.enabled = true;
                 }
             }
@@ -192,33 +162,7 @@ namespace SharpzReborn.Mods
                         foreach (var vrrig in VRRigExtensions.ActiveRigs.Where(vrrig => !vrrig.IsTagged()))
                         {
                             VRRig.LocalRig.enabled = false;
-                            Vector3 position = vrrig.transform.position + RandomVector3();
-
-                            VRRig.LocalRig.transform.position = position;
-                            VRRig.LocalRig.transform.rotation = RandomQuaternion();
-
-                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
-
-                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
-
-                            VRRig.LocalRig.leftIndex.calcT = 0f;
-                            VRRig.LocalRig.leftMiddle.calcT = 0f;
-                            VRRig.LocalRig.leftThumb.calcT = 0f;
-
-                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
-
-                            VRRig.LocalRig.rightIndex.calcT = 0f;
-                            VRRig.LocalRig.rightMiddle.calcT = 0f;
-                            VRRig.LocalRig.rightThumb.calcT = 0f;
-
-                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
                             if (ValidateTag(vrrig))
                                 ReportTag(vrrig);
                         }
@@ -234,39 +178,102 @@ namespace SharpzReborn.Mods
 
         public static void UntagGun()
         {
-
-            if (GetGunInput(false))
+            if (!GetGunInput(false))
             {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true))
+                if (gunLocked)
                 {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && gunTarget.IsTagged())
+                    gunLocked = false;
+                    lockTarget = null;
+                    VRRig.LocalRig.enabled = true;
+                }
+
+                return;
+            }
+
+            var GunData = RenderGun();
+            RaycastHit Ray = GunData.Ray;
+
+            if (gunLocked && lockTarget != null)
+            {
+                if (lockTarget.IsTagged())
+                {
+                    if (!PhotonNetwork.IsMasterClient)
                     {
-                        if (PhotonNetwork.IsMasterClient)
-                            RemoveInfected(GetPlayerFromVRRig(gunTarget));
-                        else
-                            NotifiLib.SendNotification($"{fail} You are not master client.");
+                        NotifiLib.SendNotification($"{fail} You are not the master client.");
+                        gunLocked = false;
+                        lockTarget = null;
+                        return;
                     }
+
+                    RemoveInfected(GetPlayerFromVRRig(lockTarget));
+
+                    gunLocked = false;
+                    lockTarget = null;
+                }
+                else
+                {
+                    gunLocked = false;
+                    lockTarget = null;
+                    VRRig.LocalRig.enabled = true;
+                }
+
+                return;
+            }
+
+            if (GetGunInput(true) && Ray.collider != null)
+            {
+                VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+
+                if (gunTarget && !gunTarget.IsLocal() && gunTarget.IsTagged())
+                {
+                    gunLocked = true;
+                    lockTarget = gunTarget;
                 }
             }
         }
 
         public static void FlickTagGun()
         {
-            if (GetGunInput(false))
+            if (!GetGunInput(false))
             {
-                var GunData = RenderGun();
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
+                if (gunLocked)
                 {
-                    GTPlayer.Instance.GetControllerTransform(false).position = NewPointer.transform.position;
+                    gunLocked = false;
+                    lockTarget = null;
+                }
 
-                    if (Vector3.Distance(GTPlayer.Instance.GetControllerTransform(false).position, GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
-                        GTPlayer.Instance.GetControllerTransform(false).position = GorillaTagger.Instance.bodyCollider.transform.position + (GTPlayer.Instance.GetControllerTransform(false).position - GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
+                return;
+            }
+
+            var GunData = RenderGun();
+            RaycastHit Ray = GunData.Ray;
+            GameObject NewPointer = GunData.NewPointer;
+
+            if (gunLocked && lockTarget != null)
+            {
+                Transform controller = GTPlayer.Instance.GetControllerTransform(false);
+
+                Vector3 bodyPosition = GorillaTagger.Instance.bodyCollider.transform.position;
+                Vector3 targetPosition = lockTarget.transform.position;
+
+                Vector3 offset = targetPosition - bodyPosition;
+
+                if (offset.sqrMagnitude > 16f)
+                    targetPosition = bodyPosition + offset.normalized * 4f;
+
+                controller.position = targetPosition;
+
+                return;
+            }
+
+            if (GetGunInput(true) && Ray.collider != null)
+            {
+                VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+
+                if (gunTarget && !gunTarget.IsLocal())
+                {
+                    gunLocked = true;
+                    lockTarget = gunTarget;
                 }
             }
         }

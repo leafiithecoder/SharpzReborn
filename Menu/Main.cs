@@ -1,14 +1,19 @@
 using BepInEx;
+using ExitGames.Client.Photon;
 using GorillaLocomotion;
+using GorillaLocomotion.Swimming;
 using GorillaNetworking;
 using HarmonyLib;
-using MonoMod.ModInterop;
 using Photon.Pun;
-using PlayFab.ClientModels;
+using Photon.Realtime;
 using SharpzReborn.Classes;
+using SharpzReborn.Extensions;
+using SharpzReborn.Managers;
 using SharpzReborn.Notifications;
 using SharpzReborn.Tools;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -34,7 +39,7 @@ public class Main : MonoBehaviour
 
     public static void OnLaunch()
     {
-        GameObject roomObject = new GameObject("SharpzRoom");
+        GameObject roomObject = new GameObject("SR_RoomClass");
         roomObject.AddComponent<Mods.Room>();
         Boards.DoBoards();
         ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;
@@ -48,6 +53,8 @@ public class Main : MonoBehaviour
     public static VRRig lockTarget;
 
     // Variables
+    public static Vector3 closePosition;
+
     public static bool HasLoaded;
     public static float timeMenuStarted = -1f;
     public static bool leftPrimary;
@@ -74,9 +81,17 @@ public class Main : MonoBehaviour
     public static string info = "<color=grey>[</color><color=purple>INFO</color><color=grey>]</color>";
 
     public static Vector3 ServerSyncPos;
+    public static Vector3 ServerSyncLeftHandPos;
+    public static Vector3 ServerSyncRightHandPos;
+
+
+    public static Vector3 ServerPos;
+    public static Vector3 ServerLeftHandPos;
+    public static Vector3 ServerRightHandPos;
 
     // Important
     // Objects
+    public static bool susPC;
     public static GameObject menu;
     public static GameObject menuBackground;
     public static GameObject canvasObject;
@@ -165,7 +180,7 @@ public class Main : MonoBehaviour
 
         if (category == null)
         {
-            Debug.LogError($"{Constants.Name} // Category {categoryName} does not exist.");
+            Debug.LogError($"{PluginInfo.Name} // Category {categoryName} does not exist.");
 
             return;
         }
@@ -198,6 +213,12 @@ public class Main : MonoBehaviour
             rightTrigger = ControllerInputPoller.instance.rightControllerIndexFloat;
             leftTriggerPressed = ControllerInputPoller.instance.leftIndexPressed;
             rightTriggerPressed = ControllerInputPoller.instance.rightIndexPressed;
+            susPC = !XRSettings.isDeviceActive;
+
+            ServerPos = ServerPos == Vector3.zero ? ServerSyncPos : Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+            ServerLeftHandPos = ServerLeftHandPos == Vector3.zero ? ServerSyncLeftHandPos : Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
+            ServerRightHandPos = ServerRightHandPos == Vector3.zero ? ServerSyncRightHandPos : Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
+
             bool menuButtonPressed =
                     !rightHanded &&
                     ControllerInputPoller.instance.leftControllerSecondaryButton ||
@@ -261,7 +282,7 @@ public class Main : MonoBehaviour
         catch (Exception exc)
         {
             Debug.LogError(
-                    $"{Constants.Name} // Error initializing at {exc.StackTrace}: {exc.Message}");
+                    $"{PluginInfo.Name} // Error initializing at {exc.StackTrace}: {exc.Message}");
         }
 
         try
@@ -317,15 +338,31 @@ public class Main : MonoBehaviour
                 catch (Exception exc)
                 {
                     Debug.LogError(
-                            $"{Constants.Name} // Error with mod {button.buttonText} at {exc.StackTrace}: {exc.Message}");
+                            $"{PluginInfo.Name} // Error with mod {button.buttonText} at {exc.StackTrace}: {exc.Message}");
                 }
             }
         }
         catch (Exception exc)
         {
             Debug.LogError(
-                    $"{Constants.Name} // Error with executing mods at {exc.StackTrace}: {exc.Message}");
+                    $"{PluginInfo.Name} // Error with executing mods at {exc.StackTrace}: {exc.Message}");
         }
+
+        try
+        {
+            if (TPC == null)
+            {
+                try
+                {
+                    TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                }
+                catch
+                {
+                    TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
+                }
+            }
+        }
+        catch { }
     }
 
     // Functions
@@ -431,7 +468,7 @@ public class Main : MonoBehaviour
                 currentFont;
 
         titleText.text =
-                Constants.Name                        +
+                PluginInfo.Name                        +
                 " <color=grey>[</color><color=white>" +
                 (pageNumber + 1)                      +
                 "</color><color=grey>]</color>";
@@ -669,7 +706,6 @@ public class Main : MonoBehaviour
                     0.01f;
         }
     }
-
     private static void CreateWatermark()
     {
         const string WatermarkName = "watermark.png";
@@ -680,7 +716,7 @@ public class Main : MonoBehaviour
         if (watermarkTexture == null)
         {
             Debug.LogError(
-                    $"{Constants.Name} // Failed to load {WatermarkName}.");
+                    $"{PluginInfo.Name} // Failed to load {WatermarkName}.");
 
             return;
         }
@@ -693,7 +729,7 @@ public class Main : MonoBehaviour
             if (shader == null)
             {
                 Debug.LogError(
-                        $"{Constants.Name} // Failed to find watermark shader.");
+                        $"{PluginInfo.Name} // Failed to find watermark shader.");
 
                 return;
             }
@@ -711,7 +747,7 @@ public class Main : MonoBehaviour
                         PrimitiveType.Quad);
 
         watermark.name =
-                $"{Constants.Name}_Watermark";
+                $"{PluginInfo.Name}_Watermark";
 
         Destroy(
                 watermark.GetComponent<Collider>());
@@ -947,7 +983,7 @@ public class Main : MonoBehaviour
 
         searchKeyboard =
                 new GameObject(
-                        $"{Constants.Name}_SearchKeyboard");
+                        $"{PluginInfo.Name}_SearchKeyboard");
 
         searchKeyboard.transform.SetParent(
                 searchRoot.transform,
@@ -1853,7 +1889,7 @@ public class Main : MonoBehaviour
                         PrimitiveType.Sphere);
 
         handReference.name =
-                $"{Constants.Name}_ButtonReference";
+                $"{PluginInfo.Name}_ButtonReference";
 
         handReference.transform.SetParent(
                 hand,
@@ -1936,7 +1972,7 @@ public class Main : MonoBehaviour
 
         if (button == null)
         {
-            Debug.LogError($"{Constants.Name} // Button {buttonText} does not exist.");
+            Debug.LogError($"{PluginInfo.Name} // Button {buttonText} does not exist.");
 
             return;
         }
@@ -1966,7 +2002,7 @@ public class Main : MonoBehaviour
                         }
                         catch (Exception exc)
                         {
-                            Debug.LogError($"{Constants.Name} // Error enabling {target.buttonText}: {exc}");
+                            Debug.LogError($"{PluginInfo.Name} // Error enabling {target.buttonText}: {exc}");
                         }
                     }
                 }
@@ -1984,7 +2020,7 @@ public class Main : MonoBehaviour
                         }
                         catch (Exception exc)
                         {
-                            Debug.LogError($"{Constants.Name} // Error disabling {target.buttonText}: {exc}");
+                            Debug.LogError($"{PluginInfo.Name} // Error disabling {target.buttonText}: {exc}");
                         }
                     }
                 }
@@ -2002,7 +2038,7 @@ public class Main : MonoBehaviour
                     }
                     catch (Exception exc)
                     {
-                        Debug.LogError($"{Constants.Name} // Error invoking {target.buttonText}: {exc}");
+                        Debug.LogError($"{PluginInfo.Name} // Error invoking {target.buttonText}: {exc}");
                     }
                 }
 
@@ -2021,7 +2057,7 @@ public class Main : MonoBehaviour
                     }
                     catch (Exception exc)
                     {
-                        Debug.LogError($"{Constants.Name} // Error changing {target.buttonText}: {exc}");
+                        Debug.LogError($"{PluginInfo.Name} // Error changing {target.buttonText}: {exc}");
                     }
                 }
 
@@ -2127,7 +2163,7 @@ public class Main : MonoBehaviour
 
         searchRoot =
                 new GameObject(
-                        $"{Constants.Name}_SearchRoot");
+                        $"{PluginInfo.Name}_SearchRoot");
     }
 
     private static void UpdateSearchLayout(
@@ -2475,41 +2511,68 @@ public class Main : MonoBehaviour
     }
 
     public static (RaycastHit Ray, GameObject NewPointer) RenderGun(
-            int?        overrideLayerMask = null,
-            GunSettings settings          = null)
+        int? overrideLayerMask = null,
+        GunSettings settings = null)
     {
         GunSettings currentSettings = settings ?? gunSettings;
 
         Transform gunTransform = currentSettings.hand == XRNode.LeftHand
-                                         ? GorillaTagger.Instance.leftHandTransform
-                                         : GorillaTagger.Instance.rightHandTransform;
+            ? GTPlayer.Instance.LeftHand.controllerTransform
+            : GTPlayer.Instance.RightHand.controllerTransform;
 
         Vector3 startPosition = gunTransform.position;
-        Vector3 direction     = gunTransform.forward;
-
-        Vector3 rayOrigin = startPosition + direction / 4f;
-
-        bool didHit;
+        Vector3 direction = -gunTransform.up;
 
         RaycastHit ray;
+        bool didHit;
 
-        if (overrideLayerMask.HasValue)
+        if (susPC)
         {
+            Ray mouseRay = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+            if (overrideLayerMask.HasValue)
+            {
                 didHit = Physics.Raycast(
-                                rayOrigin,
-                                direction,
-                                out ray,
-                                currentSettings.maxDistance,
-                                overrideLayerMask.Value,
-                                QueryTriggerInteraction.Ignore);
+                    mouseRay,
+                    out ray,
+                    currentSettings.maxDistance,
+                    overrideLayerMask.Value,
+                    QueryTriggerInteraction.Ignore);
+            }
+            else
+            {
+                didHit = Physics.Raycast(
+                    mouseRay,
+                    out ray,
+                    currentSettings.maxDistance,
+                    NoInvisLayerMask(),
+                    QueryTriggerInteraction.Ignore);
+            }
+
+            direction = mouseRay.direction;
         }
         else
         {
+            Vector3 rayOrigin = startPosition + direction / 4f;
+
+            if (overrideLayerMask.HasValue)
+            {
+                didHit = Physics.Raycast(
+                    rayOrigin,
+                    direction,
+                    out ray,
+                    currentSettings.maxDistance,
+                    overrideLayerMask.Value,
+                    QueryTriggerInteraction.Ignore);
+            }
+            else
+            {
                 didHit = GunRaycast(
-                                rayOrigin,
-                                direction,
-                                currentSettings.maxDistance,
-                                out ray);
+                    rayOrigin,
+                    direction,
+                    currentSettings.maxDistance,
+                    out ray);
+            }
         }
 
         Vector3 endPosition;
@@ -2532,31 +2595,31 @@ public class Main : MonoBehaviour
         }
 
         GunPointer.SetActive(true);
-        GunPointer.transform.position   = endPosition;
+        GunPointer.transform.position = endPosition;
         GunPointer.transform.localScale = Vector3.one * currentSettings.pointerSize;
 
         Renderer currentPointerRenderer = GunPointer.GetComponent<Renderer>();
         currentPointerRenderer.enabled = currentSettings.showPointer;
 
         bool pressed =
-                gunLocked ||
-                ControllerInputPoller.TriggerFloat(currentSettings.hand) > 0.5f;
+            gunLocked ||
+            ControllerInputPoller.TriggerFloat(currentSettings.hand) > 0.5f;
 
         ExtGradient pointerColors = pressed
-                                            ? currentSettings.pointerActiveColor ?? buttonColors[1]
-                                            : currentSettings.pointerIdleColor   ?? buttonColors[0];
+            ? currentSettings.pointerActiveColor ?? buttonColors[1]
+            : currentSettings.pointerIdleColor ?? buttonColors[0];
 
         currentPointerRenderer.material.color = pointerColors.GetCurrentColor();
 
         if (GunLine == null)
         {
-            GameObject lineObject = new($"{Constants.Name}_GunLine");
+            GameObject lineObject = new($"{PluginInfo.Name}_GunLine");
 
-            GunLine                   = lineObject.AddComponent<LineRenderer>();
-            GunLine.useWorldSpace     = true;
-            GunLine.numCapVertices    = 4;
+            GunLine = lineObject.AddComponent<LineRenderer>();
+            GunLine.useWorldSpace = true;
+            GunLine.numCapVertices = 4;
             GunLine.numCornerVertices = 4;
-            GunLine.material          = new Material(Shader.Find("GUI/Text Shader"));
+            GunLine.material = new Material(Shader.Find("GUI/Text Shader"));
         }
 
         GunLine.gameObject.SetActive(true);
@@ -2564,20 +2627,20 @@ public class Main : MonoBehaviour
         ExtGradient lineColors = currentSettings.lineColor ?? backgroundColor;
 
         GunLine.startColor = lineColors.GetCurrentColor();
-        GunLine.endColor   = lineColors.GetCurrentColor(0.5f);
+        GunLine.endColor = lineColors.GetCurrentColor(0.5f);
 
         GunLine.startWidth = currentSettings.lineWidth;
-        GunLine.endWidth   = currentSettings.lineWidth;
+        GunLine.endWidth = currentSettings.lineWidth;
 
         RenderGunLine(
-                startPosition,
-                endPosition,
-                gunTransform,
-                currentSettings);
+            startPosition,
+            endPosition,
+            gunTransform,
+            currentSettings);
 
         return (ray, GunPointer);
     }
-    
+
     private static bool GunRaycast(
                     Vector3        origin,
                     Vector3        direction,
@@ -2611,13 +2674,6 @@ public class Main : MonoBehaviour
                                     (layerMask & GTPlayer.Instance.locomotionEnabledLayers) != 0;
 
                     VRRig rig = collider.GetComponentInParent<VRRig>();
-
-                    Debug.Log(
-                        $"[GunDebug] {collider.name} | " +
-                        $"Trigger: {collider.isTrigger} | " +
-                        $"Layer: {collider.gameObject.layer} | " +
-                        $"Has VRRig: {rig != null}"
-                    );
 
                     bool isRig =
                                     rig != null &&
@@ -2717,10 +2773,109 @@ public class Main : MonoBehaviour
         }
     }
 
+    public static void SendSerialize(PhotonView pv, RaiseEventOptions options = null, int timeOffset = 0, float delay = 0f)
+    {
+        if (!NetworkSystem.Instance.InRoom)
+            return;
+
+        if (pv == null)
+        {
+            Debug.LogError("PhotonView is null. Cannot serialize.");
+            return;
+        }
+
+        List<object> serializedData = PhotonNetwork.OnSerializeWrite(pv);
+        if (serializedData == null || serializedData.Count == 0)
+            return;
+
+        PhotonNetwork.RaiseEventBatch raiseEventBatch = new PhotonNetwork.RaiseEventBatch();
+
+        bool mixedReliable = pv.mixedModeIsReliable;
+        raiseEventBatch.Reliable = pv.Synchronization == ViewSynchronization.ReliableDeltaCompressed || mixedReliable;
+        raiseEventBatch.Group = pv.Group;
+
+        IDictionary dictionary = PhotonNetwork.serializeViewBatches;
+
+        PhotonNetwork.SerializeViewBatch serializeViewBatch = new PhotonNetwork.SerializeViewBatch(raiseEventBatch, 2);
+
+        if (!dictionary.Contains(raiseEventBatch))
+            dictionary[raiseEventBatch] = serializeViewBatch;
+
+        serializeViewBatch.Add(serializedData);
+
+        RaiseEventOptions sendOptions = PhotonNetwork.serializeRaiseEvOptions;
+        RaiseEventOptions finalOptions = options != null ? new RaiseEventOptions
+        {
+            CachingOption = sendOptions.CachingOption,
+            Flags = sendOptions.Flags,
+            InterestGroup = sendOptions.InterestGroup,
+            TargetActors = options.TargetActors,
+            Receivers = options.Receivers
+        } : sendOptions;
+
+        bool reliable = serializeViewBatch.Batch.Reliable;
+        List<object> objectUpdate = serializeViewBatch.ObjectUpdates;
+        byte currentLevelPrefix = PhotonNetwork.currentLevelPrefix;
+
+        objectUpdate[0] = PhotonNetwork.ServerTimestamp + timeOffset;
+        objectUpdate[1] = currentLevelPrefix != 0 ? (object)currentLevelPrefix : null;
+
+        if (delay <= 0f)
+            PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? Photon.Pun.PunEvent.SendSerializeReliable : Photon.Pun.PunEvent.SendSerialize), objectUpdate, finalOptions,
+                reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable);
+        else
+        {
+            objectUpdate = new List<object>(objectUpdate);
+            CoroutineManager.Instance.StartCoroutine(SerializationDelay(() =>
+                PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? Photon.Pun.PunEvent.SendSerializeReliable : Photon.Pun.PunEvent.SendSerialize), objectUpdate, finalOptions,
+                    reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable), delay));
+        }
+
+        serializeViewBatch.Clear();
+    }
+
+    public static IEnumerator SerializationDelay(Action action, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
+    }
+
+    public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0, float delay = 0f)
+    {
+        if (!NetworkSystem.Instance.InRoom)
+            return;
+
+        viewFilter ??= Array.Empty<PhotonView>();
+
+        NonAllocDictionary<int, PhotonView> photonViewList = PhotonNetwork.photonViewList;
+        List<PhotonView> viewsToSerialize = new List<PhotonView>();
+
+        List<int> filteredViewIDs = viewFilter.Select(view => view.ViewID).ToList();
+
+        foreach (PhotonView photonView in photonViewList.Values)
+        {
+            if (!photonView.IsMine || photonView.Synchronization == ViewSynchronization.Off || !photonView.isActiveAndEnabled || PhotonNetwork.blockedSendingGroups.Contains(photonView.Group))
+                continue;
+
+            if (exclude)
+            {
+                if (!filteredViewIDs.Contains(photonView.ViewID))
+                    viewsToSerialize.Add(photonView);
+            }
+            else
+            {
+                if (filteredViewIDs.Contains(photonView.ViewID))
+                    viewsToSerialize.Add(photonView);
+            }
+        }
+
+        foreach (PhotonView view in viewsToSerialize)
+            SendSerialize(view, null, timeOffset, delay);
+    }
     public static bool GetGunInput(bool isShooting)
     {
         return isShooting
-            ? rightTrigger > 0.5f
+            ? rightTrigger > 0.5f || Mouse.current.leftButton.isPressed
             : rightGrab || Mouse.current.rightButton.isPressed;
     }
     
@@ -2765,21 +2920,72 @@ public class Main : MonoBehaviour
         GorillaTagger.Instance.offlineVRRig.SetQuestScore(score);
     }
 
-    public static float delay;
-    public static void SendWaterRPC(Vector3 pos, Quaternion rot)
+    //string body = "Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/";
+    //string head = "Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/head/";
+
+    public static void GetFreeCosmetic(string id)
     {
-        if (delay < Time.time)
-        {
-            delay = Time.time + 0.2f;
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-            {
-                    pos,
-                    rot,
-                    3f,
-                    50f,
-                    true,
-                    false,
-            });
-        }
+        // no workie anymore :-(
     }
+    public static int NoInvisLayerMask()
+    {
+        noInvisLayerMask ??= ~(
+            1 << LayerMask.NameToLayer("TransparentFX") |
+            1 << LayerMask.NameToLayer("Ignore Raycast") |
+            1 << LayerMask.NameToLayer("Zone") |
+            1 << LayerMask.NameToLayer("Gorilla Trigger") |
+            1 << LayerMask.NameToLayer("Gorilla Boundary") |
+            1 << LayerMask.NameToLayer("GorillaCosmetics") |
+            1 << LayerMask.NameToLayer("GorillaParticle"));
+
+        return noInvisLayerMask ?? GTPlayer.Instance.locomotionEnabledLayers;
+    }
+
+    private static readonly Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject>();
+    public static GameObject GetObject(string find)
+    {
+        if (objectPool.TryGetValue(find, out GameObject go))
+            return go;
+
+        GameObject tgo = GameObject.Find(find);
+        if (!tgo && find.Contains("/"))
+        {
+            var split = find.Split('/');
+            var rootName = split[0];
+
+            var root = GameObject.Find(rootName);
+
+            if (root != null)
+            {
+                var path = find[(rootName.Length + 1)..];
+                var tr = root.transform.Find(path);
+
+                if (tr != null)
+                    tgo = tr.gameObject;
+            }
+        }
+        if (tgo != null)
+            objectPool.Add(find, tgo);
+
+        return tgo;
+    }
+
+    public static Vector3 World2Player(Vector3 world) =>
+    world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
+
+    public static Vector3 lastPosition = Vector3.zero;
+
+    public static void TeleportPlayer(Vector3 pos, bool keepVelocity = false) // Prevents your hands from getting stuck on trees
+    {
+        GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation, keepVelocity);
+        VRRig.LocalRig.transform.position = pos;
+
+        closePosition = Vector3.zero;
+        lastPosition = Vector3.zero;
+        if (searchKeyboard == null) return;
+        searchKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+        searchKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+    }
+
+
 }
