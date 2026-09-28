@@ -108,6 +108,7 @@ namespace SharpzReborn.Mods
         }
 
         private static float vibrateDelay;
+
         public static void VibrateGun()
         {
             if (GetGunInput(false))
@@ -115,21 +116,47 @@ namespace SharpzReborn.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > vibrateDelay)
+                if (gunLocked && lockTarget != null)
                 {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
+                    if (GetGunInput(true) && Time.time > vibrateDelay)
                     {
-                        NetPlayer owner = Classes.RigManager.GetPlayerFromVRRig(gunTarget);
-                        BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new[] { owner.ActorNumber } });
+                        NetPlayer owner = Classes.RigManager.GetPlayerFromVRRig(lockTarget);
+
+                        BetaSetStatus(
+                            RoomSystem.StatusEffects.JoinedTaggedTime,
+                            new RaiseEventOptions
+                            {
+                                TargetActors = new[] { owner.ActorNumber }
+                            });
+
                         RPCProtection();
                         vibrateDelay = Time.time + 0.5f;
                     }
+                }
+
+                if (GetGunInput(true) && !gunLocked)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    lockTarget = null;
                 }
             }
         }
 
         private static float slowDelay;
+
         public static void SlowGun()
         {
             if (GetGunInput(false))
@@ -137,16 +164,41 @@ namespace SharpzReborn.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > slowDelay)
+                if (gunLocked && lockTarget != null)
                 {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
+                    if (GetGunInput(true) && Time.time > slowDelay)
                     {
-                        NetPlayer player = Classes.RigManager.GetPlayerFromVRRig(gunTarget);
-                        BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } });
+                        NetPlayer player = Classes.RigManager.GetPlayerFromVRRig(lockTarget);
+
+                        BetaSetStatus(
+                            RoomSystem.StatusEffects.TaggedTime,
+                            new RaiseEventOptions
+                            {
+                                TargetActors = new[] { player.ActorNumber }
+                            });
+
                         RPCProtection();
                         slowDelay = Time.time + 1f;
                     }
+                }
+
+                if (GetGunInput(true) && !gunLocked)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    lockTarget = null;
                 }
             }
         }

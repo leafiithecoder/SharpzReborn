@@ -447,6 +447,7 @@ public class Settings
 
     [SavedSetting] public static bool fpsCounter       = true;
     [SavedSetting] public static bool disconnectButton = true;
+    [SavedSetting] public static bool homeButton       = true;
     [SavedSetting] public static bool rightHanded;
     [SavedSetting] public static bool disableNotifications;
 

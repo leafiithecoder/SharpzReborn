@@ -158,17 +158,31 @@ public class Main : MonoBehaviour
 
     private static readonly ButtonInfo searchButton = new()
     {
-            buttonText = "Search",
+        buttonText = "Search",
 
-            displayText = () =>
-                                  IsSearching
-                                          ? $"Search [{(string.IsNullOrEmpty(searchQuery) ? "..." : searchQuery)}]"
-                                          : "Search",
+        displayText = () =>
+                              IsSearching
+                                      ? $"Search [{(string.IsNullOrEmpty(searchQuery) ? "..." : searchQuery)}]"
+                                      : "Search",
 
-            method  = ToggleSearch,
-            mode    = ButtonMode.Action,
-            toolTip = "Searches for buttons in the menu.",
+        method = ToggleSearch,
+        mode = ButtonMode.Action,
+        toolTip = "Searches for buttons in the menu.",
     };
+
+    private static readonly ButtonInfo homeButton = new()
+    {
+        buttonText = "Home",
+        displayText = () => "Home",
+        method = () =>
+        {
+            SetCategory("Main");
+            RecreateMenu();
+        },
+        mode = ButtonMode.Action,
+        toolTip = "Returns to the main menu."
+    };
+
     public static bool IsSearching { get; private set; }
 
     public static ButtonCategory CurrentCategory =>
@@ -696,6 +710,11 @@ public class Main : MonoBehaviour
                             90f);
         }
 
+        if (Settings.homeButton)
+        {
+            CreateHomeButton();
+        }
+
         CreateMenuButtons();
 
         if (animateMenu &&
@@ -844,6 +863,76 @@ public class Main : MonoBehaviour
 
         if (pageNumber > lastPage)
             pageNumber = 0;
+    }
+
+    private static void CreateHomeButton()
+    {
+        GameObject homeObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        homeObject.name = "home";
+
+        Destroy(homeObject.GetComponent<Rigidbody>());
+
+        if (!UnityInput.Current.GetKey(keyboardButton))
+            homeObject.layer = 2;
+
+        homeObject.transform.parent = menu.transform;
+        homeObject.transform.rotation = Quaternion.identity;
+
+        homeObject.transform.localScale =
+            new Vector3(0.045f, 0.25f, 0.064295f);
+
+        homeObject.transform.localPosition =
+            new Vector3(0.56f, -0.657f, 0.53f);
+
+        BoxCollider collider = homeObject.GetComponent<BoxCollider>();
+        collider.isTrigger = true;
+
+        Button button = homeObject.AddComponent<Button>();
+        button.relatedButton = homeButton;
+
+        ExtGradient colors = homeButton.enabled
+            ? homeButton.enabledColor ?? buttonColors[1]
+            : homeButton.disabledColor ?? buttonColors[0];
+
+        ColorChanger colorChanger = homeObject.AddComponent<ColorChanger>();
+        colorChanger.colors = colors;
+        colorChanger.spatialGradient =
+            homeButton.useGradient ?? buttonGradients;
+        colorChanger.verticalGradient = verticalButtonGradients;
+
+        CreateOutline(
+            menu.transform,
+            homeObject.transform.localPosition,
+            homeObject.transform.localScale,
+            buttonCornerRadius,
+            homeButton.useRounded ?? roundedButtons);
+
+        Text text = new GameObject
+        {
+            transform =
+        {
+            parent = canvasObject.transform
+        }
+        }.AddComponent<Text>();
+
+        text.font = currentFont;
+        text.text = "Home";
+        text.fontSize = 1;
+        text.alignment = TextAnchor.MiddleCenter;
+        text.resizeTextForBestFit = true;
+        text.resizeTextMinSize = 0;
+        text.color = textColors[0];
+
+        RectTransform textTransform = text.GetComponent<RectTransform>();
+
+        textTransform.localPosition =
+            new Vector3(0.064f, -0.195f, 0.200f);
+
+        textTransform.sizeDelta =
+            new Vector2(0.18f, 0.02f);
+
+        textTransform.rotation =
+            Quaternion.Euler(180f, 90f, 90f);
     }
 
     private static void CreateMenuButtons()
@@ -2469,43 +2558,30 @@ public class Main : MonoBehaviour
 
     public static void FixStickyColliders(GameObject platform)
     {
-        Vector3[] localPositions =
-        [
-                        new(0, 1f, 0),
-                new(0, -1f, 0),
-                new(1f, 0, 0),
-                new(-1f, 0, 0),
-                new(0, 0, 1f),
-                new(0, 0, -1f),
-        ];
-
-        Quaternion[] localRotations =
-        [
-                        Quaternion.Euler(90,  0,   0),
-                Quaternion.Euler(-90, 0,   0),
-                Quaternion.Euler(0,   -90, 0),
-                Quaternion.Euler(0,   90,  0),
+        Vector3[] localPositions = {
+                new Vector3(0, 1f, 0),
+                new Vector3(0, -1f, 0),
+                new Vector3(1f, 0, 0),
+                new Vector3(-1f, 0, 0),
+                new Vector3(0, 0, 1f),
+                new Vector3(0, 0, -1f)
+            };
+        Quaternion[] localRotations = {
+                Quaternion.Euler(90, 0, 0),
+                Quaternion.Euler(-90, 0, 0),
+                Quaternion.Euler(0, -90, 0),
+                Quaternion.Euler(0, 90, 0),
                 Quaternion.identity,
-                Quaternion.Euler(0, 180, 0),
-        ];
-
+                Quaternion.Euler(0, 180, 0)
+            };
         for (int i = 0; i < localPositions.Length; i++)
         {
             GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            try
-            {
-                if (platform.GetComponent<GorillaSurfaceOverride>() != null)
-                {
-                    side.AddComponent<GorillaSurfaceOverride>().overrideIndex = platform.GetComponent<GorillaSurfaceOverride>().overrideIndex;
-                }
-            }
-            catch { }
-
-            const float Size = 0.025f;
+            float size = 0.025f * 1f;
             side.transform.SetParent(platform.transform);
-            side.transform.position = localPositions[i] * (Size / 2);
+            side.transform.position = localPositions[i] * (size / 2);
             side.transform.rotation = localRotations[i];
-            WorldScale(side, new Vector3(Size, Size, 0.01f));
+            WorldScale(side, new Vector3(size, size, 0.01f * 1f));
             side.GetComponent<Renderer>().enabled = false;
         }
     }
@@ -2642,58 +2718,51 @@ public class Main : MonoBehaviour
     }
 
     private static bool GunRaycast(
-                    Vector3        origin,
-                    Vector3        direction,
-                    float          maxDistance,
-                    out RaycastHit hit)
+        Vector3 origin,
+        Vector3 direction,
+        float maxDistance,
+        out RaycastHit hit)
     {
-            Ray ray = new(origin, direction);
+        Ray ray = new(origin, direction);
 
-            RaycastHit[] hits = Physics.RaycastAll(
-                            ray,
-                            maxDistance,
-                            ~0,
-                            QueryTriggerInteraction.Collide);
+        RaycastHit[] hits = Physics.RaycastAll(
+            ray,
+            maxDistance,
+            ~0,
+            QueryTriggerInteraction.Collide);
 
-            hit = default(RaycastHit);
+        hit = default;
+        float closestDistance = float.MaxValue;
 
-            float closestDistance = float.MaxValue;
+        foreach (RaycastHit candidate in hits)
+        {
+            Collider collider = candidate.collider;
 
-            foreach (RaycastHit candidate in hits)
-            {
-                    Collider collider = candidate.collider;
+            if (collider == null)
+                continue;
 
-                    if (collider == null)
-                    {
-                            continue;
-                    }
+            int layerMask = 1 << collider.gameObject.layer;
 
-                    int layerMask = 1 << collider.gameObject.layer;
+            bool isInteractable =
+                (layerMask & GTPlayer.Instance.locomotionEnabledLayers) != 0;
 
-                    bool isInteractable =
-                                    (layerMask & GTPlayer.Instance.locomotionEnabledLayers) != 0;
+            VRRig rig = collider.GetComponentInParent<VRRig>();
 
-                    VRRig rig = collider.GetComponentInParent<VRRig>();
+            bool isRig =
+                rig != null &&
+                rig != VRRig.LocalRig;
 
-                    bool isRig =
-                                    rig != null &&
-                                    rig != VRRig.LocalRig;
+            if (!isInteractable && !isRig)
+                continue;
 
-                    if (!isInteractable && !isRig)
-                    {
-                            continue;
-                    }
+            if (candidate.distance >= closestDistance)
+                continue;
 
-                    if (candidate.distance >= closestDistance)
-                    {
-                            continue;
-                    }
+            closestDistance = candidate.distance;
+            hit = candidate;
+        }
 
-                    closestDistance = candidate.distance;
-                    hit             = candidate;
-            }
-
-            return hit.collider != null;
+        return hit.collider != null;
     }
 
     private static void RenderGunLine(
@@ -2904,8 +2973,19 @@ public class Main : MonoBehaviour
         catch { Debug.Log("RPC protection failed, are you in a lobby?"); }
     }
 
-    public static void ChangeName(string PlayerName)
+    public static void ChangeName(string PlayerName, bool noColor = false)
     {
+        if (!noColor)
+        {
+            try
+            {
+                if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork
+                        .LocalPlayer.UserId) &&
+                    !CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.ActorNumber)) return;
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b);
+            }
+            catch { }
+        }
         GorillaComputer.instance.currentName = PlayerName;
 
         GorillaComputer.instance.SetLocalNameTagText(GorillaComputer.instance.currentName);
@@ -2914,7 +2994,9 @@ public class Main : MonoBehaviour
         PlayerPrefs.Save();
 
         PhotonNetwork.LocalPlayer.NickName = PlayerName;
+        RPCProtection();
     }
+
     public static void SetScore(int score)
     {
         GorillaTagger.Instance.offlineVRRig.SetQuestScore(score);
@@ -2985,6 +3067,35 @@ public class Main : MonoBehaviour
         if (searchKeyboard == null) return;
         searchKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
         searchKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+    }
+
+    public static void ChangeColor(Color color, object target = null)
+    {
+        PlayerPrefs.SetFloat("redValue", Mathf.Clamp(color.r, 0f, 1f));
+        PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
+        PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
+
+        GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
+        PlayerPrefs.Save();
+
+        try
+        {
+            switch (target)
+            {
+                case null:
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, color.r, color.g, color.b);
+                    break;
+                case NetPlayer player:
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", player, color.r, color.g, color.b);
+                    break;
+                case RpcTarget targets:
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", targets, color.r, color.g, color.b);
+                    break;
+            }
+
+            RPCProtection();
+        }
+        catch { }
     }
 
 

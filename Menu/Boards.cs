@@ -5,25 +5,27 @@ namespace SharpzReborn.Menu
 {
     public class Boards
     {
+        //『
+        //』
 
         public static string Title = "Sharpz Reborn";
         public static string MotdSetText = "Welcome to Sharpz Reborn! A menu made by Sharpz.\n " +
             "This menu is completely free and open sourced, if you paid for this menu you have been <color=red>scammed.</color>\n" +
-            $"There are a total of {Buttons.ButtonCount} on this menu.\n" +
+            $"There are a total of <color=purple>{Buttons.ButtonCount}</color> on this menu.\n" +
             "I am not responsible for any bans using this menu.\n" +
-            "If you get banned while using this, it's your responsibility.\n\n<alpha=128>Made with <3 Sharpz.<alpha=255>\n\n ";
+            "If you get banned while using this, it's your responsibility.\n\n<alpha=128>Made with <3 by Sharpz.<alpha=255>\n\n ";
 
         public static string COCSetText = "Welcome to Sharpz Reborn! A menu made by Sharpz.\n" +
         "Suspected Detected Mods:\n" +
         "- None\n" +
         "\n" +
         "Meanings:\n" +
-        "[<color=purple>M</color>] Requires Master\n" +
+        "[<color=purple>M</color] Requires Master\n" +
         "[<color=purple>M?</color>] Maybe Requires Master\n" +
         "[<color=purple>D</color>] Detected\n" +
-        "[<color=purple>D</color>] Maybe Detected \n";
-
-
+        "[<color=purple>D</color>] Maybe Detected \n" +
+        "[<color=purple>KB</color>] Half Broken \n" +
+        "[<color=purple>BK</color>] Broken \n";
 
         private static TMP_Text MotdText;
         private static TMP_Text MotdBodyText;

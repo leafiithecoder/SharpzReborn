@@ -28,7 +28,6 @@ namespace SharpzReborn.Mods
 
         public override void OnLeftRoom()
         {
-            //obsolete
             Debug.Log("pun succeeded");
             Visuals.ClearLinePool(true);
         }
@@ -58,14 +57,6 @@ namespace SharpzReborn.Mods
         {
             yield return new WaitForSeconds(1.5f);
             JoinRandomRoom();
-        }
-
-        public static void ReconnectAndRejoin()
-        {
-            if (PhotonNetwork.InRoom)
-                return;
-
-            PhotonNetwork.ReconnectAndRejoin();
         }
         
         public static void AmIMaster()
@@ -147,11 +138,18 @@ namespace SharpzReborn.Mods
             QueueRoom(roomName.ToUpper());
         }
 
-        public static string PrivateRoomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
+        private const string PrivateRoomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         public static void JoinRandomPriv()
         {
+            char[] code = new char[4];
 
+            for (int i = 0; i < code.Length; i++)
+                code[i] = PrivateRoomChars[UnityEngine.Random.Range(0, PrivateRoomChars.Length)];
+
+            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(
+                new string(code),
+                JoinType.Solo);
         }
     }
 }

@@ -7,11 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using static SharpzReborn.Menu.Main;
 
 namespace SharpzReborn.Mods
 {
     public class Visuals
     {
+
+        #region ESP 
         // thank you Poison for the boneESP code
         private static readonly Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>();
         public static readonly int[] bones = {
@@ -113,6 +116,44 @@ namespace SharpzReborn.Mods
             }
         }
 
+        private static readonly Dictionary<VRRig, GameObject> boxESP = new Dictionary<VRRig, GameObject>();
+        public static void CasualBoxESP()
+        {
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (var box in boxESP.Where(box => !VRRigExtensions.ActiveRigs.Contains(box.Key)))
+            {
+                toRemove.Add(box.Key);
+                UnityEngine.Object.Destroy(box.Value);
+            }
+
+            foreach (VRRig rig in toRemove)
+                boxESP.Remove(rig);
+
+            foreach (var vrrig in VRRigExtensions.ActiveRigs.Where(vrrig => !vrrig.isLocal))
+            {
+                if (!boxESP.TryGetValue(vrrig, out GameObject box))
+                {
+                    box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+
+                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                    boxESP.Add(vrrig, box);
+                }
+
+                Color color = vrrig.playerColor;
+
+                box.GetComponent<Renderer>().material.color = color;
+
+                box.transform.position = vrrig.transform.position;
+                box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+            }
+        }
+        #endregion
+
         public static readonly List<LineRenderer> linePool = new List<LineRenderer>();
 
         public static GameObject lineRenderHolder;
@@ -182,6 +223,107 @@ namespace SharpzReborn.Mods
                 if (previousFullbrightStatus)
                     GameLightingManager.instance.SetCustomDynamicLightingEnabled(true);
             }
+        }
+
+        public static string _leavesName;
+
+        public static string LeavesName
+        {
+            get
+            {
+                if (_leavesName == null)
+                {
+                    var forest = GetObject("Environment Objects/LocalObjects_Prefab/Forest");
+
+                    _leavesName = forest
+                        .GetComponentsInChildren<Transform>(true)
+                        .Where(t =>
+                            t.name.StartsWith("UnityTempFile") &&
+                            t.parent != null &&
+                            t.parent == forest.transform)
+                        .GroupBy(t => t.name)
+                        .Where(g => g.Count() == 3)
+                        .OrderByDescending(g => g.First().GetSiblingIndex())
+                        .FirstOrDefault()?.Key ?? "UnityTempFile";
+                }
+                return _leavesName;
+            }
+        }
+
+        public static readonly List<GameObject> leaves = new List<GameObject>();
+        public static void EnableRemoveLeaves()
+        {
+            GameObject Forest = GetObject("Environment Objects/LocalObjects_Prefab/Forest");
+            if (Forest != null)
+            {
+                for (int i = 0; i < Forest.transform.childCount; i++)
+                {
+                    GameObject v = Forest.transform.GetChild(i).gameObject;
+                    if (v.name.Contains(LeavesName))
+                    {
+                        v.SetActive(false);
+                        leaves.Add(v);
+                    }
+                }
+            }
+
+            GameObject RankedForest = GetObject("RankedMain/Ranked_Layout/Ranked_Forest_prefab");
+            if (RankedForest != null)
+            {
+                for (int i = 0; i < RankedForest.transform.childCount; i++)
+                {
+                    GameObject v = RankedForest.transform.GetChild(i).gameObject;
+                    if (v.name.Contains(LeavesName))
+                    {
+                        v.SetActive(false);
+                        leaves.Add(v);
+                    }
+                }
+            }
+        }
+
+        public static void DisableRemoveLeaves()
+        {
+            foreach (GameObject l in leaves)
+                l.SetActive(true);
+
+            leaves.Clear();
+        }
+
+        private static readonly List<GameObject> cherryBlossoms = new();
+        private static bool cherryBlossomsFound;
+
+        public static void CherryBlossoms()
+        {
+            if (!cherryBlossomsFound)
+            {
+                cherryBlossomsFound = true;
+
+                foreach (GameObject obj in GameObject.FindObjectsByType<GameObject>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None))
+                {
+                    if (obj.name == "Cherry Blossoms")
+                        cherryBlossoms.Add(obj);
+                }
+            }
+
+            foreach (GameObject obj in cherryBlossoms)
+            {
+                if (obj != null && !obj.activeSelf)
+                    obj.SetActive(true);
+            }
+        }
+
+        public static void DisableCherryBlossoms()
+        {
+            foreach (GameObject obj in cherryBlossoms)
+            {
+                if (obj != null)
+                    obj.SetActive(false);
+            }
+
+            cherryBlossomsFound = false;
         }
     }
 }

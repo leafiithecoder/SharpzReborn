@@ -34,104 +34,59 @@ namespace SharpzReborn.Mods
         public static void BetaWaterSplash(
             Vector3 splashPosition,
             Quaternion splashRotation,
-            float splashScale = 4,
+            float splashScale = 4f,
             float boundingRadius = 100f,
             bool bigSplash = true,
             bool enteringWater = false,
             object general = null,
             bool bypassDelay = false)
         {
-            if (CanCallWaterSplashNow() || bypassDelay)
+            if (!CanCallWaterSplashNow() && !bypassDelay)
+                return;
+
+            try
             {
-                try
+                general ??= RpcTarget.All;
+
+                object[] parameters =
                 {
-                    general ??= RpcTarget.All;
+            splashPosition,
+            splashRotation,
+            splashScale,
+            boundingRadius,
+            bigSplash,
+            enteringWater
+        };
 
-                    splashScale = Mathf.Clamp(splashScale, 1E-05f, 1f);
-                    boundingRadius = Mathf.Clamp(boundingRadius, 0.0001f, 0.5f);
+                switch (general)
+                {
+                    case RpcTarget target:
+                        GorillaTagger.Instance.myVRRig.SendRPC(
+                            WaterVolume.WaterSplashRPC,
+                            target,
+                            parameters);
+                        break;
 
-                    if ((GorillaTagger.Instance.bodyCollider.transform.position - splashPosition).sqrMagnitude >= 8.5f)
-                    {
-                        VRRig.LocalRig.transform.position = splashPosition;
-                        SendSerialize(VRRig.LocalRig.GetPhotonView());
-                    }
+                    case NetPlayer player:
+                        GorillaTagger.Instance.myVRRig.SendRPC(
+                            WaterVolume.WaterSplashRPC,
+                            Utilities.RigUtilities.NetPlayerToPlayer(player),
+                            parameters);
+                        break;
 
-                    object[] parameters =
-                    {
-                splashPosition,
-                splashRotation,
-                splashScale,
-                boundingRadius,
-                bigSplash,
-                enteringWater
-            };
-
-                    switch (general)
-                    {
-                        case NetPlayer player:
+                    case int[] targets:
+                        foreach (int target in targets)
+                        {
                             GorillaTagger.Instance.myVRRig.SendRPC(
                                 WaterVolume.WaterSplashRPC,
-                                Utilities.RigUtilities.NetPlayerToPlayer(player),
+                                target,
                                 parameters);
-                            break;
-
-                        case RpcTarget target:
-                            {
-                                if (target == RpcTarget.All)
-                                {
-                                    ObjectPools.instance.Instantiate(
-                                        GTPlayer.Instance.waterParams.rippleEffect,
-                                        splashPosition,
-                                        splashRotation,
-                                        GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f);
-
-                                    ObjectPools.instance.Instantiate(
-                                        GTPlayer.Instance.waterParams.splashEffect,
-                                        splashPosition,
-                                        splashRotation,
-                                        splashScale)
-                                        .GetComponent<WaterSplashEffect>()
-                                        .PlayEffect(bigSplash, enteringWater, splashScale);
-
-                                    target = RpcTarget.Others;
-                                }
-
-                                GorillaTagger.Instance.myVRRig.SendRPC(
-                                    WaterVolume.WaterSplashRPC,
-                                    target,
-                                    parameters);
-
-                                break;
-                            }
-
-                        case int[] targets:
-                            {
-                                if (targets.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
-                                {
-                                    ObjectPools.instance.Instantiate(
-                                        GTPlayer.Instance.waterParams.rippleEffect,
-                                        splashPosition,
-                                        splashRotation,
-                                        GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f);
-                                }
-
-                                foreach (int target in targets)
-                                {
-                                    GorillaTagger.Instance.myVRRig.SendRPC(
-                                        WaterVolume.WaterSplashRPC,
-                                        target,
-                                        parameters);
-                                }
-
-                                break;
-                            }
-                    }
-
-                    RPCProtection();
+                        }
+                        break;
                 }
-                catch
-                {
-                }
+            }
+            catch
+            {
             }
         }
 
@@ -275,41 +230,58 @@ namespace SharpzReborn.Mods
                 SendWaterRPC(GTPlayer.Instance.RightHand.controllerTransform.position, GTPlayer.Instance.RightHand.controllerTransform.rotation);
             }
         }
-        public static void GiveWaterBendingGun()
+
+        public static float colorChangerDelay;
+
+        public static int colorChangeType;
+        public static bool strobeColor;
+
+        public static void FlashColor()
         {
-            if (GetGunInput(false))
+            if (Time.time > colorChangerDelay)
             {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    if (lockTarget.rightMiddle.calcT > 0.5f || lockTarget.leftMiddle.calcT > 0.5f)
-                    {
-                        if (Time.time > splashDel)
-                        {
-                            Vector3 splashPosition = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.position : lockTarget.leftHandTransform.position;
-                            Quaternion splashRotation = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.rotation : lockTarget.leftHandTransform.rotation;
-
-                            SendWaterRPC(splashPosition, splashRotation);
-                            splashDel = Time.time + 0.1f;
-                        }
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.isLocal)
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
+                colorChangerDelay = Time.time + 0.05f;
+                strobeColor = !strobeColor;
+                ChangeColor(strobeColor ? Color.white : Color.black);
             }
-            else
+        }
+
+        public static void StrobeColor()
+        {
+            if (Time.time > colorChangerDelay)
             {
-                if (gunLocked)
-                    gunLocked = false;
+                colorChangerDelay = Time.time + 0.05f;
+                ChangeColor(RandomColor());
+            }
+        }
+
+        public static void RainbowColor()
+        {
+            if (Time.time > colorChangerDelay)
+            {
+                colorChangerDelay = Time.time + 0.05f;
+                float h = Time.frameCount / 180f % 1f;
+                ChangeColor(Color.HSVToRGB(h, 1f, 1f));
+            }
+        }
+
+        public static void HardRainbowColor()
+        {
+            if (Time.time > colorChangerDelay)
+            {
+                colorChangerDelay = Time.time + 0.5f;
+                colorChangeType++;
+                if (colorChangeType > 3)
+                    colorChangeType = 0;
+
+                Color[] colors = {
+                    Color.red,
+                    Color.green,
+                    Color.blue,
+                    Color.magenta
+                };
+
+                ChangeColor(colors[colorChangeType]);
             }
         }
 

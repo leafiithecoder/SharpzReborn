@@ -22,8 +22,8 @@ public abstract class Movement
         if (!ControllerInputPoller.instance.rightControllerPrimaryButton)
             return;
 
-        GTPlayer.Instance.transform.position            += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * Settings.Movement.flySpeed;
-        GorillaTagger.Instance.rigidbody.linearVelocity =  Vector3.zero;
+        GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * Settings.Movement.flySpeed;
+        GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
     }
 
     public static void TriggerFly()
@@ -72,6 +72,8 @@ public abstract class Movement
         bool leftActive;
         bool rightActive;
 
+        bool nsp = GetIndex("Non-Sticky Platforms").enabled;
+
         if (triggerPlatforms)
         {
             leftActive = leftTriggerPressed;
@@ -87,78 +89,39 @@ public abstract class Movement
         {
             if (platl == null)
             {
-                platl =
-                        GameObject.CreatePrimitive(
-                                PrimitiveType.Cube);
-
-                platl.transform.localScale =
-                        new Vector3(
-                                0.025f,
-                                0.3f,
-                                0.4f);
-
-                platl.transform.position =
-                        TrueLeftHand().position + TrueLeftHand().right * 0.05f;
-
-                platl.transform.rotation =
-                        TrueLeftHand().rotation;
-
-                FixStickyColliders(
-                        platl);
-
-                ColorChanger colorChanger =
-                        platl.AddComponent<ColorChanger>();
-
-                colorChanger.colors =
-                        Menu.Settings.backgroundColor;
+                platl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                platl.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
+                platl.transform.position = TrueLeftHand().position + TrueLeftHand().right * 0.05f;
+                platl.transform.rotation = TrueLeftHand().rotation;
+                FixStickyColliders(platl);
+                ColorChanger colorChanger = platl.AddComponent<ColorChanger>();
+                colorChanger.colors = Menu.Settings.backgroundColor;
             }
         }
         else if (platl != null)
         {
-            Object.Destroy(
-                    platl);
+            Object.Destroy(platl);
 
-            platl =
-                    null;
+            platl = null;
         }
 
         if (rightActive)
         {
             if (platr == null)
             {
-                platr =
-                        GameObject.CreatePrimitive(
-                                PrimitiveType.Cube);
-
-                platr.transform.localScale =
-                        new Vector3(
-                                0.025f,
-                                0.3f,
-                                0.4f);
-
-                platr.transform.position =
-                        TrueRightHand().position - TrueRightHand().right * 0.05f;
-
-                platr.transform.rotation =
-                        TrueRightHand().rotation;
-
-                FixStickyColliders(
-                        platr);
-
-                ColorChanger colorChanger =
-                        platr.AddComponent<ColorChanger>();
-
-                colorChanger.colors =
-                        Menu.Settings.backgroundColor;
+                platr = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                platr.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
+                platr.transform.position = TrueRightHand().position - TrueRightHand().right * 0.05f;
+                platr.transform.rotation = TrueRightHand().rotation;
+                FixStickyColliders(platr);
+                ColorChanger colorChanger = platr.AddComponent<ColorChanger>();
+                colorChanger.colors = Menu.Settings.backgroundColor;
             }
         }
         else if (platr != null)
         {
-            Object.Destroy(
-                    platr);
-
-            platr =
-                    null;
+            Object.Destroy(platr);
+            platr = null;
         }
     }
     public static void TeleportGun()
@@ -273,9 +236,12 @@ public abstract class Movement
     {
         oldSlide = GTPlayer.Instance.slideControl;
         GTPlayer.Instance.slideControl = 1f;
+        GTPlayer.Instance.slideFactor = 0f;
     }
     public static void DisableSlideControl() =>
         GTPlayer.Instance.slideControl = oldSlide;
+
+    
     public static void LowGravity() =>
         GorillaTagger.Instance.rigidbody.AddForce(Vector3.up * 6.66f, ForceMode.Acceleration);
     public static void ZeroGravity() =>

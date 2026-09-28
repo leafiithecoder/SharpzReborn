@@ -16,16 +16,10 @@ namespace SharpzReborn.Mods
     {
         public static void TagSelf()
         {
-            static void TurnOff()
-            {
-                Buttons.GetIndex("Tag Self").SetEnabled(false);
-                RecreateMenu();
-            }
             if (PhotonNetwork.IsMasterClient)
             {
                 AddInfected(PhotonNetwork.LocalPlayer);
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
-                TurnOff();
             }
             else
             {
@@ -33,7 +27,6 @@ namespace SharpzReborn.Mods
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
                     VRRig.LocalRig.enabled = true;
-                    TurnOff();
                 }
                 else
                 {
@@ -61,16 +54,21 @@ namespace SharpzReborn.Mods
                     RemoveInfected(v);
             }
         }
+        public static int vbux;
         public static void DisableTags()
         {
-            Notifications.NotifiLib.SendNotification($"{warning} You should Flush RPCs after this.");
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification($"{fail} You are not master client.");
             else
             {
-                foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
-                    RemoveInfected(v);
+                if (vbux == 2)
+                {
+                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                        RemoveInfected(v);
+                }
             }
+            NotifiLib.SendNotification($"{warning} You should Flush RPCs after this.");
+            vbux++;
         }
 
         public static bool ValidateTag(VRRig Rig) =>
@@ -100,7 +98,7 @@ namespace SharpzReborn.Mods
                     if (!lockTarget.IsTagged())
                     {
                         VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
+                        VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 0.1f, 0f);
 
                         if (ValidateTag(lockTarget))
                             ReportTag(lockTarget);
@@ -140,11 +138,19 @@ namespace SharpzReborn.Mods
         {
             if (!NetworkSystem.Instance.InRoom) return;
 
+            static void TurnOff()
+            {
+                Buttons.GetIndex("Tag All").SetEnabled(false);
+                RecreateMenu();
+            }
+
+
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                     AddInfected(v);
 
+                TurnOff();
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Everyone is tagged!");
             }
             else
@@ -153,6 +159,7 @@ namespace SharpzReborn.Mods
                 if (!VRRig.LocalRig.IsTagged())
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be tagged.");
+                    TurnOff();
                 }
                 else
                 {
@@ -162,15 +169,18 @@ namespace SharpzReborn.Mods
                         foreach (var vrrig in VRRigExtensions.ActiveRigs.Where(vrrig => !vrrig.IsTagged()))
                         {
                             VRRig.LocalRig.enabled = false;
-                            VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
+
+                                VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 0.1f, 0f);
+
                             if (ValidateTag(vrrig))
                                 ReportTag(vrrig);
                         }
                     }
                     else
                     {
-                        NotifiLib.SendNotification($"{success} Everyone is tagged!");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Everyone is tagged!");
                         VRRig.LocalRig.enabled = true;
+                        TurnOff();
                     }
                 }
             }
