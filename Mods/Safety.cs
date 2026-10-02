@@ -110,5 +110,36 @@ namespace SharpzReborn.Mods
 
         public static void DisableAntiOculusReport() =>
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived_AntiOculusReport;
+
+        public static void VIMAntiReport(bool block)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+            AntiReport((vrrig, position) =>
+            {
+                if (admins.Contains(vrrig.GetPlayer().UserId))
+                {
+                    return;
+                }
+
+                if (block)
+                {
+                    RoomControls.KickAndBlockPlayer(vrrig.GetPlayer().ActorNumber);
+                }
+
+                else
+                {
+                    RoomControls.KickPlayer(vrrig.GetPlayer().ActorNumber);
+                }
+
+                if (!(Time.time > antiReportDelay)) return;
+                antiReportDelay = Time.time + 1f;
+                NotifiLib.SendNotification($"{ModInfoNotif("ANTI-REPORT")} " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been kicked.");
+                reportRig = null;
+            });
+        }
     }
 }

@@ -122,7 +122,7 @@ public static class RoundedButtonMesh
 
         Mesh mesh = new()
         {
-                name = $"{PluginInfo.Guid}RoundedButton_{size.y:0.###}_{size.z:0.###}",
+                name = $"{PluginInfo.GUID}RoundedButton_{size.y:0.###}_{size.z:0.###}",
         };
 
         mesh.SetVertices(vertices);

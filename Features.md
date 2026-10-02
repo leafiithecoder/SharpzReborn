@@ -23,13 +23,16 @@
 
 ### Safety
 - Anti-Report [Disconnect]
-- Anti-Moderator [Disconnect]
+- Anti-Report [Quest]
+- Anti-Report [VIM Kick]
+- Anti-Report [VIM Block]
+- Anti-Moderator
 - No Finger Movement
 - Flush RPCs
-- Anti-Report [Quest]
 
 ### Visual
 - Bone ESP
+- Box ESP
 - Tracers
 - Morning Time
 - Day Time
@@ -69,11 +72,38 @@
 - Water Splash All
 - Max Quest Score
 - Reset Quest Score
+- Rainbow Color
+- Strobe Color
+- Hard Rainbow Color
 - Lowercase Name
 
-### Overpowered
+### VIM Mods
 - VIM Kick Gun
+- VIM Block Gun
+- VIM Mute Gun
 - VIM Kick All
+- VIM Block All
+- VIM Mute All
+- VIM Kick On Touch
+- VIM Block On Touch
+- VIM Mute On Touch
+- VIM Kick Random
+- VIM Block Random
+- VIM Mute Random
+- VIM Kick All Tagged
+- VIM Block All Tagged
+- VIM Mute All Tagged
+- VIM Kick All Untagged
+- VIM Block All Untagged
+- VIM Mute All Untagged
+- VIM Kick Closest
+- VIM Block Closest
+- VIM Mute Closest
+
+### Overpowered
+- Get Free VIM [D?]
+- VIM Mods
+- Cosmetix [CS]
 - Slow Gun [M]
 - Vibrate Gun [M]
 - Rock To Infection
@@ -101,6 +131,7 @@
 - Disconnect
 - Join Last Room
 - Join Random Public Room
+- Join Random Private Room
 - Reconnect
 - Join Menu Room
 - Check Master
@@ -130,6 +161,8 @@
 - Queue Room [WARNING]
 
 # Settings
+- Menu Settings
+- Movement Settings
 
 ## Menu Settings
 - Clear Notifications

@@ -6,6 +6,7 @@ using System.Collections;
 using UnityEngine;
 using static SharpzReborn.Menu.Buttons;
 using static SharpzReborn.Menu.Main;
+using SharpzReborn.Classes;
 
 namespace SharpzReborn.Mods
 {
@@ -24,6 +25,7 @@ namespace SharpzReborn.Mods
         public override void OnJoinedRoom()
         {
             lastRoom = PhotonNetwork.CurrentRoom.Name;
+            RoomHistory.Add(PhotonNetwork.CurrentRoom.Name);
         }
 
         public override void OnLeftRoom()

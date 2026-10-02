@@ -204,6 +204,20 @@ public abstract class Movement
         GTPlayer.Instance.GetControllerTransform(false).transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * ((Settings.Movement.armLength - 0.917f) * GTPlayer.Instance.scale);
     }
 
+    public static void BarkFly()
+    {
+        Vector3 inputDirection = new Vector3(leftJoystick.x, rightJoystick.y, leftJoystick.y);
+
+        Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward.X_Z();
+        Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right.X_Z();
+
+        Vector3 velocity = inputDirection.x * playerRight + inputDirection.y * Vector3.up + inputDirection.z * playerForward;
+        velocity *= Settings.Movement.flySpeed;
+        GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.linearVelocity, velocity, 0.12875f);
+
+        ZeroGravity();
+    }
+
     public static GameObject stickpart;
     public static void StickyHands()
     {

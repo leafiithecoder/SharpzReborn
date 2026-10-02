@@ -85,6 +85,14 @@ namespace SharpzReborn.Mods
                     liner.SetPosition(1, vrrig.mainSkin.bones[bones[i * 2 + 1]].position);
                 }
             }
+
+        }
+        public static void DisableBoneESP()
+        {
+            foreach (var renderer in boneESP.SelectMany(bones => bones.Value))
+                UnityEngine.Object.Destroy(renderer);
+
+            boneESP.Clear();
         }
 
         public static void Tracers()
@@ -151,6 +159,14 @@ namespace SharpzReborn.Mods
                 box.transform.position = vrrig.transform.position;
                 box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
             }
+        }
+
+        public static void DisableBoxESP()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> box in boxESP)
+                UnityEngine.Object.Destroy(box.Value);
+
+            boxESP.Clear();
         }
         #endregion
 
@@ -324,6 +340,11 @@ namespace SharpzReborn.Mods
             }
 
             cherryBlossomsFound = false;
+        }
+
+        public static Transform GetNameTagTransform(VRRig rig)
+        {
+            return rig.headMesh.transform;
         }
     }
 }

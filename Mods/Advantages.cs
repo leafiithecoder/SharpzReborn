@@ -115,7 +115,9 @@ namespace SharpzReborn.Mods
                     if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
+                        {
                             AddInfected(GetPlayerFromVRRig(gunTarget));
+                        }
                         else
                         {
                             if (!VRRig.LocalRig.IsTagged()) return;

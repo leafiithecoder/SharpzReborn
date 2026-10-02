@@ -3,6 +3,7 @@ using GorillaLocomotion.Swimming;
 using Photon.Pun;
 using Photon.Realtime;
 using SharpzReborn.Extensions;
+using SharpzReborn.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -283,6 +284,13 @@ namespace SharpzReborn.Mods
 
                 ChangeColor(colors[colorChangeType]);
             }
+        }
+
+        public static void CopySelfID()
+        {
+            string id = PhotonNetwork.LocalPlayer.UserId;
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id);
+            GUIUtility.systemCopyBuffer = id;
         }
 
     }

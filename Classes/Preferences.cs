@@ -27,7 +27,7 @@ public static class Preferences
     private static readonly string SavePath =
             Path.Combine(
                     Paths.ConfigPath,
-                    PluginInfo.Guid + ".json");
+                    PluginInfo.GUID + ".json");
 
     private static readonly List<SavedField> SavedFields =
             FindSavedFields();

@@ -1,6 +1,7 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaLocomotion.Gameplay;
+using GorillaNetworking;
 using Photon.Pun;
 using Photon.Realtime;
 using SharpzReborn.Extensions;
@@ -8,11 +9,16 @@ using SharpzReborn.Managers;
 using SharpzReborn.Menu;
 using SharpzReborn.Notifications;
 using SharpzReborn.Patches.Internal;
+using SharpzReborn.Utilities;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using static SharpzReborn.Menu.Main;
 using Random = UnityEngine.Random;
+using GorillaTag;
+using System;
 
 namespace SharpzReborn.Mods
 {
@@ -27,6 +33,7 @@ namespace SharpzReborn.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
+                
 
                 if (GetGunInput(true))
                 {
@@ -202,6 +209,126 @@ namespace SharpzReborn.Mods
                 }
             }
         }
+
+        public static float delay;
+
+        public static void BetaNearbyFollowCommand(GorillaFriendCollider friendCollider, Photon.Realtime.Player player)
+        {
+            PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);
+
+            object[] groupJoinSendData = new object[2];
+            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { player.ActorNumber } };
+
+            if (friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) && friendCollider.playerIDsCurrentlyTouching.Contains(player.UserId) && player != PhotonNetwork.LocalPlayer)
+                RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
+            else if (!friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
+        }
+
+        public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = false)
+        {
+            PhotonNetworkController.Instance.FriendIDList.Clear();
+            yield return new WaitForSeconds(extraDelay);
+
+            bool joinedRoomPatchEnabled = JoinedRoomPatch.enabled;
+
+            string queueArchive = GorillaComputer.instance.currentQueue;
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = RandomString();
+
+            action?.Invoke();
+            yield return new WaitForSeconds(0.3f);
+            action2?.Invoke();
+            yield return new WaitForSeconds(1f);
+
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = queueArchive;
+
+            yield return new WaitForSeconds(30f);
+
+            JoinedRoomPatch.enabled = joinedRoomPatchEnabled;
+        }
+
+        public static void CreateKickRoom()
+        {
+             Tools.Utils.BroadcastRoom(RandomString(), true, PhotonNetworkController.Instance.keyToFollow, PhotonNetworkController.Instance.shuffler);
+             Room.Reconnect();
+        }
+
+        private static float kickDelay;
+        public static void StumpKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > kickDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        NetPlayer player = RigUtilities.GetPlayerFromVRRig(gunTarget);
+                        kickDelay = Time.time + 0.5f;
+
+                        if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId))
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The player must be in stump.");
+                            return;
+                        }
+
+                        if (!NetworkSystem.Instance.SessionIsPrivate)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                            return;
+                        }
+
+                        CoroutineManager.Instance.StartCoroutine(StumpKickDelay(() =>
+                        {
+                            PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                            BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, RigUtilities.NetPlayerToPlayer(player));
+                            RPCProtection();
+                        }, () =>
+                        {
+                            CreateKickRoom();
+                        }));
+                    }
+                }
+            }
+        }
+
+        public static void StumpKickAll()
+        {
+            if (NetworkSystem.Instance.InRoom)
+            {
+                if (!NetworkSystem.Instance.SessionIsPrivate)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                    return;
+                }
+
+                CoroutineManager.Instance.StartCoroutine(StumpKickDelay(() =>
+                {
+                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    foreach (VRRig rig in VRRigExtensions.ActiveRigs.Where(rig => !rig.IsLocal() && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(rig.GetPlayer().UserId)))
+                        BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, RigUtilities.NetPlayerToPlayer(rig.GetPlayer()));
+
+                    RPCProtection();
+                }, () =>
+                {
+                    CreateKickRoom();
+                }));
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+        }
+
         #endregion
         #region Game Modes
         public static void InfectionToTag()
@@ -234,38 +361,143 @@ namespace SharpzReborn.Mods
         }
         #endregion
         #region VIM
-        public static void VIMKickGun()
+        public static void VIMAction(int type, VRRig target)
         {
-            if (!VRRig.LocalRig.IsVIMSubscriber())
+            if (target == null || target.IsLocal())
             {
-                Notifications.NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
-                return;
-            }
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
-                    {
-                        RoomControls.KickPlayer(gunTarget.GetPlayer().ActorNumber);
-                    }
-                }
-            }
-        }
-
-        public static void VIMKickAll()
-        {
-            if (!VRRig.LocalRig.IsVIMSubscriber())
-            {
-                Notifications.NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
-            NetworkSystem.Instance.PlayerListOthers.ForEach(p => RoomControls.KickPlayer(p.ActorNumber));
+            if (admins.Contains(target.GetPlayer().UserId))
+            {
+                return;
+            } 
+
+            switch (type)
+            {
+                case 0:
+                    RoomControls.KickPlayer(target.GetPlayer().ActorNumber);
+                    break;
+                case 1:
+                    RoomControls.KickAndBlockPlayer(target.GetPlayer().ActorNumber);
+                    break;
+                case 2:
+                    RoomControls.MutePlayer(target.GetPlayer().ActorNumber);
+                    break;
+            }
         }
+
+        public static void VIMActionGun(int type)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+
+            if (!GetGunInput(false))
+                return;
+
+            var GunData = RenderGun();
+            RaycastHit Ray = GunData.Ray;
+
+            if (!GetGunInput(true))
+                return;
+
+            VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+
+            if (gunTarget && !gunTarget.IsLocal())
+                VIMAction(type, gunTarget);
+        }
+
+        public static void VIMActionAll(int type)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+
+            NetworkSystem.Instance.PlayerListOthers.ForEach(v =>
+                VIMAction(type, RigUtilities.GetVRRigFromPlayer(v)));
+        }
+
+        public static void VIMActionOnTouch(int type, bool undo = false)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+
+            foreach (VRRig rig in VRRigExtensions.ActiveRigs)
+            {
+                if (!rig.IsLocal() && rig.IsBeingTouched())
+                    VIMAction(type, rig);
+            }
+        }
+
+        public static void VIMActionRandom(int type)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+
+            List<VRRig> validRigs = VRRigExtensions.ActiveRigs
+                .Where(rig => rig != null && !rig.IsLocal())
+                .ToList();
+
+            if (validRigs.Count == 0)
+                return;
+
+            VRRig target = validRigs[Random.Range(0, validRigs.Count)];
+
+            VIMAction(type, target);
+        }
+
+        public static void VIMActionTagged(int type)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+
+            foreach (VRRig rig in VRRigExtensions.ActiveRigs)
+            {
+                if (rig != null && !rig.IsLocal() && rig.IsTagged())
+                    VIMAction(type, rig);
+            }
+        }
+        public static void VIMActionUntagged(int type)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+
+            foreach (VRRig rig in VRRigExtensions.ActiveRigs)
+            {
+                if (rig != null && !rig.IsLocal() && !rig.IsTagged())
+                    VIMAction(type, rig);
+               
+            }
+        }
+
+        public static void VIMActionClosest(int type)
+        {
+            if (!VRRig.LocalRig.IsVIMSubscriber())
+            {
+                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                return;
+            }
+
+            VIMAction(type, RigUtilities.GetClosestVRRig());
+        }
+
         #endregion
         #region Rope
         public static Coroutine RopeCoroutine;

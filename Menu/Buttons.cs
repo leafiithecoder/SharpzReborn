@@ -1,15 +1,14 @@
 ﻿using GorillaLocomotion;
 using GorillaNetworking;
-using Pathfinding.RVO.Sampled;
 using SharpzReborn.Classes;
 using SharpzReborn.Mods;
-using SharpzReborn.Mods.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using static SharpzReborn.Menu.Main;
+using SharpzReborn.Patches;
+using SharpzReborn.Patches.Internal;
 
 namespace SharpzReborn.Menu
 {
@@ -32,6 +31,7 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] Settings =
             [
                 new() { buttonText = "Exit Settings", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main menu page." },
+
                 new() { buttonText = "Menu Settings", method = () => SetCategory("Menu Settings"), mode = ButtonMode.Action, toolTip = "Opens the menu settings." },
                 new() { buttonText = "Movement Settings", method = () => SetCategory("Movement Settings"), mode = ButtonMode.Action, toolTip = "Opens the movement settings." },
             ];
@@ -39,8 +39,10 @@ namespace SharpzReborn.Menu
             private static readonly ButtonInfo[] MenuSettings =
             [
                 new() { buttonText = "Exit Menu Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main settings page." },
+
                 new() { buttonText = "Clear Notifications", method = Notifications.NotifiLib.ClearAllNotifications, mode = ButtonMode.Action, toolTip = "Clears all notifications from the menu."},
                 new() { buttonText = "Right Handed Menu", enableMethod = () => Menu.Settings.rightHanded = true, disableMethod = () => Menu.Settings.rightHanded = false, enabled = Menu.Settings.rightHanded, mode = ButtonMode.Toggle, toolTip = "Moves the menu to your right hand." },
+                new() { buttonText = "COC Room History", enableMethod = RoomHistory.Enable, disableMethod = RoomHistory.Disable, toolTip = "Displays recent rooms on the COC board."},
                 new() { buttonText = "Disable Notifications", enableMethod = () => Menu.Settings.disableNotifications = true, disableMethod = () => Menu.Settings.disableNotifications = false, enabled = Menu.Settings.disableNotifications, mode = ButtonMode.Toggle, toolTip = "Disables notifications." },
                 new() { buttonText = "Disable FPS Counter", enableMethod = () => Menu.Settings.fpsCounter = false, disableMethod = () => Menu.Settings.fpsCounter = true, enabled = !Menu.Settings.fpsCounter, mode = ButtonMode.Toggle, toolTip = "Disables the FPS counter." },
                 new() { buttonText = "Disable Disconnect Button", enableMethod = () => Menu.Settings.disconnectButton = false, disableMethod = () => Menu.Settings.disconnectButton = true, enabled = !Menu.Settings.disconnectButton, mode = ButtonMode.Toggle, toolTip = "Disables the disconnect button." },
@@ -61,6 +63,7 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] MovementSettings =
             [
                 new() { buttonText = "Exit Movement Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main settings page." },
+
                 new() { buttonText = "Change Fly Speed", overlapText = $"Change Fly Speed『{Mods.Settings.Movement.flySpeedNames[Mods.Settings.Movement.flySpeedIndex]}』", incrementMethod = Mods.Settings.Movement.ChangeFlySpeed, mode = ButtonMode.Incremental, toolTip = "Changes the fly speed." },
                 new() { buttonText = "Change Arm Length", overlapText = $"Change Arm Length『{Mods.Settings.Movement.armLengthNames[Mods.Settings.Movement.armLengthIndex]}』", incrementMethod = Mods.Settings.Movement.ChangeArmLength, mode = ButtonMode.Incremental, toolTip = "Changes the length of your arms." },
                 new() { buttonText = "Change Speed Boost Amount", overlapText = $"Change Speed Boost Amount 『{Mods.Settings.Movement.speedNames[Mods.Settings.Movement.speedAmountIndex]}』", incrementMethod = Mods.Settings.Movement.ChangeSpeedBoostAmount, mode = ButtonMode.Incremental, toolTip = "Changes the amount of your speed boost." },
@@ -75,6 +78,7 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] RoomMods =
             [
                 new() { buttonText = "Exit Photon Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main menu page." },
+
                 new() { buttonText = "Disconnect", method = () => NetworkSystem.Instance.ReturnToSinglePlayer(), mode = ButtonMode.Action, toolTip = "Disconnects you from the current room." },
                 new() { buttonText = "Join Last Room", method = Room.JoinLastRoom, mode = ButtonMode.Action, toolTip = "Joins the last room you were in." },
                 new() { buttonText = "Join Random Public Room", method = Room.JoinRandomRoom, mode = ButtonMode.Action, toolTip = "Joins a random available public room." },
@@ -88,6 +92,7 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] QueueRoomMods =
             [
                 new() { buttonText = "Exit Queue Rooms", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the room mods page of the menu." },
+
                 new() { buttonText = "Queue Room 『MODS』", method =() => Room.QueueJoinRoom("mods"), mode = ButtonMode.Action, toolTip = "Joins the MODS queue room." },
                 new() { buttonText = "Queue Room 『MOD』", method =() => Room.QueueJoinRoom("mod"), mode = ButtonMode.Action, toolTip = "Joins the MOD queue room." },
                 new() { buttonText = "Queue Room 『MODDER』", method =() => Room.QueueJoinRoom("modder"), mode = ButtonMode.Action, toolTip = "Joins the MODDER queue room." },
@@ -114,16 +119,19 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] MovementMods =
             [
                 new() { buttonText = "Exit Movement Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main menu page." },
+
                 new() { buttonText = "Platforms『G』", method = Mods.Movement.Platforms, mode = ButtonMode.Toggle, toolTip = "Spawns platforms on your hands when you press grip." },
                 new() { buttonText = "Fly『A』", method = Mods.Movement.Fly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A." },
                 new() { buttonText = "Hand Fly『A』", method = Mods.Movement.HandFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward in the direction your hand is pointing while holding A." },
                 new() { buttonText = "Noclip Fly『A』", method = Mods.Movement.NoclipFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A and lets you phase through walls." },
                 new() { buttonText = "Trigger Fly『T』", method = Mods.Movement.TriggerFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding your right trigger." },
                 new() { buttonText = "WASD Fly", enableMethod = Mods.Movement.EnableWASDFly, method = Mods.Movement.WASDFly, disableMethod = () => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), mode = ButtonMode.Toggle, toolTip = "Moves you around with WASD." },
+                new() { buttonText = "Bark Fly", enableMethod = Mods.Movement.BarkFly, mode = ButtonMode.Toggle, toolTip = "Moves you around with your joysticks. Credit: KyleTheScientist" },
                 new() { buttonText = "Teleport Gun", method = Mods.Movement.TeleportGun, mode = ButtonMode.Toggle, toolTip = "Teleports you to the pointer position when you press the trigger." },
                 new() { buttonText = "Speed Boost", method = Mods.Movement.SpeedBoost, mode = ButtonMode.Toggle, toolTip = "Increases your movement speed." },
                 new() { buttonText = "Noclip『T』", method = Mods.Movement.Noclip, mode = ButtonMode.Toggle, toolTip = "Allows you to move through walls." },
                 new() { buttonText = "Steam Long Arms", enableMethod = Mods.Movement.EnableSteamLongArms, disableMethod = Mods.Movement.DisableSteamLongArms, method = Mods.Movement.EnableSteamLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates SteamVR's world scale to make your arms longer." },
+                new() { buttonText = "Stick Long Arms", enableMethod = Mods.Movement.StickLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates arm extenders." },
                 new() { buttonText = "Sticky Hands", enableMethod = Mods.Movement.StickyHands, disableMethod = Mods.Movement.DisableStickyHands, method = Mods.Movement.StickyHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands sticky." },
                 new() { buttonText = "Slide Control", enableMethod = Mods.Movement.EnableSlideControl, disableMethod = Mods.Movement.DisableSlideControl, mode = ButtonMode.Toggle, toolTip = "Allows you to control your sliding." },
                 new() { buttonText = "Moon Walk", method = Mods.Movement.LowGravity, mode = ButtonMode.Toggle, toolTip = "Reduces the gravity affecting you." },
@@ -140,18 +148,24 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] SafetyMods =
             [
                 new() { buttonText = "Exit Safety Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
-                new() { buttonText = "Anti-Report『Disconnect』", method = Safety.AntiReportDisconnect, mode = ButtonMode.Toggle, toolTip = "Disconnects when you are reported." },
+
+                new() { buttonText = "Anti-Report『Disconnect』", method = Safety.AntiReportDisconnect, mode = ButtonMode.Toggle, toolTip = "Disconnects you when you are reported." },
+                new() { buttonText = "Anti-Report『Quest』", enableMethod = Safety.EnableAntiOculusReport, disableMethod = Safety.DisableAntiOculusReport, toolTip = "Disconnects when you are reported through the Meta Quest report menu."},
+
+                new() { buttonText = "Anti-Report『VIM Kick』", method =() => Safety.VIMAntiReport(false), mode = ButtonMode.Toggle, toolTip = "Kicks the player who attempts to report you."},
+                new() { buttonText = "Anti-Report『VIM Block』", method =() => Safety.VIMAntiReport(true), mode = ButtonMode.Toggle, toolTip = "Blocks the player who attempts to report you."},
+
                 new() { buttonText = "Anti-Moderator", method = Safety.AntiModerator, mode = ButtonMode.Toggle, toolTip = "Disconnects when there is a moderator in the lobby." },
                 new() { buttonText = "No Finger Movement", method = Safety.NoFingerMovement, mode = ButtonMode.Toggle, toolTip = "Disables finger movement." },
                 new() { buttonText = "Flush RPCs", method = Safety.FlushRPCs, mode = ButtonMode.Action, toolTip = "Flushes RPCs." },
-                new() { buttonText = "Anti-Report『Quest』", enableMethod = Safety.EnableAntiOculusReport, disableMethod = Safety.DisableAntiOculusReport, toolTip = "Disconnects when you are reported through the Meta Quest report menu."},
             ];
 
             public static ButtonInfo[] VisualMods =
             [
                 new() { buttonText = "Exit Visual Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
-                new() { buttonText = "Bone ESP", method = Visuals.BoneESP, disableMethod =() => {Visuals.isLineRenderQueued = false; Visuals.ClearLinePool(); }, mode = ButtonMode.Toggle, toolTip = "Displays other players’ bones." },
-                new() { buttonText = "Box ESP", method = Visuals.CasualBoxESP, disableMethod =() => {Visuals.isLineRenderQueued = false; Visuals.ClearLinePool(); }, mode = ButtonMode.Toggle, toolTip = "Displays boxes over other players." },
+
+                new() { buttonText = "Bone ESP", method = Visuals.BoneESP, disableMethod = Visuals.DisableBoneESP, mode = ButtonMode.Toggle, toolTip = "Displays other players’ bones." },
+                new() { buttonText = "Box ESP", method = Visuals.CasualBoxESP, disableMethod = Visuals.DisableBoxESP, mode = ButtonMode.Toggle, toolTip = "Displays boxes over other players." },
                 new() { buttonText = "Tracers", method = Visuals.Tracers, disableMethod =() => {Visuals.isLineRenderQueued = false; Visuals.ClearLinePool(); }, mode = ButtonMode.Toggle, toolTip = "Draws lines from your hand to other players." },
                 new() { buttonText = "Morning Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(1), toolTip = "Sets your time of day to morning."},
                 new() { buttonText = "Day Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(3), toolTip = "Sets your time of day to daytime."},
@@ -164,6 +178,7 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] PlayerMods =
             [
                 new() { buttonText = "Exit Player Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+
                 new() { buttonText = "Fix Head", method = Player.FixHead, mode = ButtonMode.Action, toolTip = "Fixes issues with your head." },
                 new() { buttonText = "Grab Rig 『G』", method = Player.GrabRig, mode = ButtonMode.Toggle, toolTip = "Lets you grab your rig." },
                 new() { buttonText = "Ghost『A』", method = Player.Ghost, mode = ButtonMode.Toggle, toolTip = "Makes you a ghost." },
@@ -186,9 +201,10 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] AdvantageMods =
             [
                 new() { buttonText = "Exit Advantage Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+
                 new() { buttonText = "Tag Self", method = Advantages.TagSelf, mode = ButtonMode.Toggle, toolTip = "Makes you tagged." },
                 new() { buttonText = "Tag Gun", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag other players while you are tagged using a gun." },
-                new() { buttonText = "Tag All『BK』", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone in the room." },
+                new() { buttonText = "Tag All『M』", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone in the room." },
                 new() { buttonText = "Untag All『M』", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tagged state from everyone." },
                 new() { buttonText = "Untag Gun『M』", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tagged state from the player you target with the gun." },
                 new() { buttonText = "Disable Tags『M』", method = Advantages.DisableTags, mode = ButtonMode.Toggle, disableMethod = Notifications.NotifiLib.ClearAllNotifications, toolTip = "Continuously removes the tagged state from everyone." },
@@ -198,16 +214,49 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] ImportantMods =
             [
                 new() { buttonText = "Exit Important Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+
                 new() { buttonText = "Crash", method = Application.Quit, mode = ButtonMode.Action, toolTip = "Closes the game." },
+            ];
+
+            public static ButtonInfo[] VIMMods =
+            [
+                new() { buttonText = "Exit VIM Mods", method = () => SetCategory("Overpowered Mods"), mode = ButtonMode.Action, toolTip = "Returns to the overpowered mods page." },
+
+                new() { buttonText = "VIM Clear Blocked", method =() => RoomControls.blockedPlayers.Clear(), mode = ButtonMode.Toggle, toolTip = "Kicks the player you target. [VIM]" },
+                new() { buttonText = "VIM Kick Gun", method =() => OP.VIMActionGun(0), mode = ButtonMode.Toggle, toolTip = "Kicks the player you target. [VIM]" },
+                new() { buttonText = "VIM Block Gun", method =() => OP.VIMActionGun(1), mode = ButtonMode.Toggle, toolTip = "Blocks the player you target. [VIM]" },
+                new() { buttonText = "VIM Mute Gun", method =() => OP.VIMActionGun(2), mode = ButtonMode.Toggle, toolTip = "Mutes the player you target. [VIM]" },
+                new() { buttonText = "VIM Kick All", method =() => OP.VIMActionAll(0), mode = ButtonMode.Toggle, toolTip = "Kicks everyone in the room. [VIM]" },
+                new() { buttonText = "VIM Block All", method =() => OP.VIMActionAll(1), mode = ButtonMode.Toggle, toolTip = "Blocks everyone in the room. [VIM]" },
+                new() { buttonText = "VIM Mute All", method =() => OP.VIMActionAll(2), mode = ButtonMode.Toggle, toolTip = "Mutes everyone in the room. [VIM]" },
+                new() { buttonText = "VIM Kick On Touch", method =() => OP.VIMActionOnTouch(0), mode = ButtonMode.Toggle, toolTip = "Kicks whoever your hand collides with. [VIM]" },
+                new() { buttonText = "VIM Block On Touch", method =() => OP.VIMActionOnTouch(1), mode = ButtonMode.Toggle, toolTip = "Blocks whoever your hand collides with. [VIM]" },
+                new() { buttonText = "VIM Mute On Touch", method =() => OP.VIMActionOnTouch(2), mode = ButtonMode.Toggle, toolTip = "Mutes whoever your hand collides with. [VIM]" },
+                new() { buttonText = "VIM Kick All Tagged", method = () => OP.VIMActionTagged(0), mode = ButtonMode.Toggle, toolTip = "Kicks every tagged player. [VIM]" },
+                new() { buttonText = "VIM Block All Tagged", method = () => OP.VIMActionTagged(1), mode = ButtonMode.Toggle, toolTip = "Blocks every tagged player. [VIM]" },
+                new() { buttonText = "VIM Mute All Tagged", method = () => OP.VIMActionTagged(2), mode = ButtonMode.Toggle, toolTip = "Mutes every tagged player. [VIM]" },
+                new() { buttonText = "VIM Kick All Untagged", method = () => OP.VIMActionUntagged(0), mode = ButtonMode.Toggle, toolTip = "Kicks every tagged player. [VIM]" },
+                new() { buttonText = "VIM Block All Untagged", method = () => OP.VIMActionUntagged(1), mode = ButtonMode.Toggle, toolTip = "Blocks every tagged player. [VIM]" },
+                new() { buttonText = "VIM Mute All Untagged", method = () => OP.VIMActionUntagged(2), mode = ButtonMode.Toggle, toolTip = "Mutes every tagged player. [VIM]" },
+                new() { buttonText = "VIM Kick Random", method = () => OP.VIMActionRandom(0), mode = ButtonMode.Toggle, toolTip = "Kicks a random player. [VIM]" },
+                new() { buttonText = "VIM Block Random", method = () => OP.VIMActionRandom(1), mode = ButtonMode.Toggle, toolTip = "Blocks a random player. [VIM]" },
+                new() { buttonText = "VIM Mute Random", method = () => OP.VIMActionRandom(2), mode = ButtonMode.Toggle, toolTip = "Mutes a random player. [VIM]" },
+                new() { buttonText = "VIM Kick Closest", method = () => OP.VIMActionClosest(0), mode = ButtonMode.Toggle, toolTip = "Kicks the closest player. [VIM]" },
+                new() { buttonText = "VIM Block Closest", method = () => OP.VIMActionClosest(1), mode = ButtonMode.Toggle, toolTip = "Blocks the closest player. [VIM]" },
+                new() { buttonText = "VIM Mute Closest", method = () => OP.VIMActionClosest(2), mode = ButtonMode.Toggle, toolTip = "Mutes the closest player. [VIM]" },
             ];
 
             public static ButtonInfo[] OpMods =
             [
                 new() { buttonText = "Exit Overpowered Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
-                new() { buttonText = "VIM Kick Gun", method = OP.VIMKickGun, mode = ButtonMode.Toggle, toolTip = "Kicks the player you target. [VIM]" },
-                new() { buttonText = "VIM Kick All", method = OP.VIMKickAll, mode = ButtonMode.Toggle, toolTip = "Kicks everyone in the room. [VIM]" },
-                new() { buttonText = "Slow Gun『M』", method = OP.SlowGun, mode = ButtonMode.Toggle, toolTip = "Slows the player you target." },
-                new() { buttonText = "Vibrate Gun『M』", method = OP.VibrateGun, mode = ButtonMode.Toggle, toolTip = "Vibrates the player you target." },
+
+                new() { buttonText = "Get Free VIM", enableMethod =() => SubscriptionPatches.enabled = true, disableMethod =() => SubscriptionPatches.enabled = false, toolTip = "Unlocks VIM." },
+                new() { buttonText = "VIM Mods", method =() => SetCategory("VIM"), mode = ButtonMode.Action, toolTip = "Opens the VIM mods tab."},
+
+                new() { buttonText = "Stump Kick Gun", method = OP.StumpKickGun, mode = ButtonMode.Toggle, toolTip = "Allows you to kick players within Stump with a gun."},
+                new() { buttonText = "Stump Kick All", method = OP.StumpKickAll, mode = ButtonMode.Toggle, toolTip = "Kicks everyone in Stump."},
+                new() { buttonText = "Slow Gun『M』『BK』", method = OP.SlowGun, mode = ButtonMode.Toggle, toolTip = "Slows the player you target." },
+                new() { buttonText = "Vibrate Gun『M』『BK』", method = OP.VibrateGun, mode = ButtonMode.Toggle, toolTip = "Vibrates the player you target." },
                 new() { buttonText = "Rock To Infection", method = OP.TagToInfection, mode = ButtonMode.Action, toolTip = "Changes the game mode." },
                 new() { buttonText = "Infection To Rock", method = OP.InfectionToTag, mode = ButtonMode.Action, toolTip = "Changes the game mode." },
                 new() { buttonText = "Spaz Ropes", method = OP.SpazAllRopes, mode = ButtonMode.Toggle, toolTip = "Rapidly moves all ropes." },
@@ -225,17 +274,17 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Water Bending『LG』", method = Fun.WaterL, mode = ButtonMode.Toggle, toolTip = "Spawns water splashes at your left hand." },
                 new() { buttonText = "Water Splash Gun", method = Fun.WaterSplashGun, mode = ButtonMode.Toggle, toolTip = "Creates water splashes wherever your gun points." },
                 new() { buttonText = "Water Splash Aura", method = Fun.WaterSplashAura, mode = ButtonMode.Toggle, toolTip = "Creates water splashes randomly around you." },
-                new() { buttonText = "Water Splash 『G』", method = Fun.WaterSplashHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands create water splashes." },
+                new() { buttonText = "Water Splash『G』", method = Fun.WaterSplashHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands create water splashes." },
                 new() { buttonText = "Water Splash Walk", method = Fun.WaterSplashWalk, mode = ButtonMode.Toggle, toolTip = "Creates water splashes as you walk." },
                 new() { buttonText = "Water Splash On Touch", method = Fun.WaterSplashOnTouch, mode = ButtonMode.Toggle, toolTip = "Creates water splashes on players you touch." },
                 new() { buttonText = "Give Water Splash Hands Gun", method = Fun.GiveWaterSplashHandsGun, mode = ButtonMode.Toggle, toolTip = "Creates water splashes on everyone’s hands." },
                 new() { buttonText = "Water Splash All", method = Fun.WaterSplashAll, mode = ButtonMode.Toggle, toolTip = "Makes other players create water splashes on their hands." },
                 new() { buttonText = "Max Quest Score", method =() => SetScore(99999), mode = ButtonMode.Action, toolTip = "Sets your Quest score to the maximum value." },
                 new() { buttonText = "Reset Quest Score", method =() => SetScore(0), mode = ButtonMode.Action, toolTip = "Sets your Quest score to 0." },
-                new() { buttonText = "Lowercase Name", method =() => ChangeName(GorillaComputer.instance.currentName.ToLower()), mode = ButtonMode.Action, toolTip = "Changes your name to lowercase."},
-                new() { buttonText = "Rainbow Color", method = Fun.RainbowColor, mode = ButtonMode.Toggle, toolTip = "Makes you rainbow."},
-                new() { buttonText = "Strobe Color", method = Fun.StrobeColor, mode = ButtonMode.Toggle, toolTip = "Makes your color strobe random colors. [EPILEPSY WARNING]"},
-                new() { buttonText = "Hard Rainbow Color", method = Fun.HardRainbowColor, mode = ButtonMode.Toggle, toolTip = "Makes you rainbow with no transition."}
+                new() { buttonText = "Lowercase Name [CS?]", method =() => ChangeName(GorillaComputer.instance.currentName.ToLower()), mode = ButtonMode.Action, toolTip = "Changes your name to lowercase."},
+                new() { buttonText = "Rainbow Color [CS?]", method = Fun.RainbowColor, mode = ButtonMode.Toggle, toolTip = "Makes you rainbow."},
+                new() { buttonText = "Strobe Color [CS?]", method = Fun.StrobeColor, mode = ButtonMode.Toggle, toolTip = "Makes your color strobe random colors. [EPILEPSY WARNING]"},
+                new() { buttonText = "Hard Rainbow Color [CS?]", method = Fun.HardRainbowColor, mode = ButtonMode.Toggle, toolTip = "Makes you rainbow with no transition."}
             ];
 
             public static ButtonCategory[] Categories =
@@ -253,6 +302,7 @@ namespace SharpzReborn.Menu
                 new() { name = "Advantage Mods", buttons = AdvantageMods },
                 new() { name = "Fun Mods", buttons = FunMods },
                 new() { name = "Overpowered Mods", buttons = OpMods},
+                new() { name = "VIM", buttons = VIMMods},
                 new() { name = "Important Mods", buttons = ImportantMods },
             ];
 

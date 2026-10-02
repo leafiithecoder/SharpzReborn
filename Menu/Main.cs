@@ -1,13 +1,11 @@
 using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
-using GorillaLocomotion.Swimming;
 using GorillaNetworking;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
 using SharpzReborn.Classes;
-using SharpzReborn.Extensions;
 using SharpzReborn.Managers;
 using SharpzReborn.Notifications;
 using SharpzReborn.Tools;
@@ -19,6 +17,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using CommonUsages = UnityEngine.XR.CommonUsages;
+using Valve.VR;
 using static SharpzReborn.Menu.Buttons;
 using static SharpzReborn.Menu.Settings;
 using Button = SharpzReborn.Classes.Button;
@@ -39,104 +39,113 @@ public class Main : MonoBehaviour
 
     public static void OnLaunch()
     {
+        // Room
         GameObject roomObject = new GameObject("SR_RoomClass");
         roomObject.AddComponent<Mods.Room>();
-        Boards.DoBoards();
+
+        
+        Boards.SetLaunchBoards();
+
         ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;
+
+        IsSteam = PlayFabAuthenticator.instance.platform;
+
+        AdminManager.LoadWatermark();
     }
 
+    // Fields
+    public static bool IsSteam = true;
+
+    // Floats
     private const  float TextRenderScale   = 0.001f;
     private const  float TextSurfaceOffset = 0.0035f;
-    private static int?  noInvisLayerMask;
-
-    public static bool  gunLocked;
-    public static VRRig lockTarget;
-
-    // Variables
-    public static Vector3 closePosition;
-
-    public static bool HasLoaded;
     public static float timeMenuStarted = -1f;
-    public static bool leftPrimary;
-    public static bool leftSecondary;
-    public static bool rightPrimary;
-    public static bool rightSecondary;
-    public static bool leftGrab;
-    public static bool rightGrab;
     public static float leftTrigger;
     public static float rightTrigger;
+
+    // Bools
+    public static bool gunLocked;
     public static bool leftTriggerPressed;
     public static bool rightTriggerPressed;
-
     public static bool gripSpeedBoost;
     public static bool triggerSpeedBoost;
     public static bool triggerPlatforms;
     public static bool nonStickyPlatforms;
     public static bool constantNoclip;
     public static bool gripNoclip;
+    public static bool leftPrimary;
+    public static bool leftSecondary;
+    public static bool rightPrimary;
+    public static bool rightSecondary;
+    public static bool leftGrab;
+    public static bool rightGrab;
+    public static bool HasLoaded;
+    public static bool susPC;
+    private static bool searchUsingDesktopKeyboard;
+    private static bool menuButtonWasPressed;
+    private static bool menuToggledOpen;
+    private static bool menuClosing;
+    private static bool menuShouldDropOnClose;
+    private static bool searchKeyboardFollowing;
 
+    // Strings
+    public static string CosmeticsOwned;
     public static string success = "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color>";
     public static string fail = "<color=grey>[</color><color=red>FAIL</color><color=grey>]</color>";
     public static string warning = "<color=grey>[</color><color=red>WARNING</color><color=grey>]</color>";
     public static string info = "<color=grey>[</color><color=purple>INFO</color><color=grey>]</color>";
+    private static string searchQuery = string.Empty;
 
+    public static List<string> admins = ["9B9FC7722B67BBC0", "D3B707D5F31FC1F7"];
+    // admin1=sharpz, admin2=legcup
+
+    // Integers
+    private static int? noInvisLayerMask;
+    public static int pageNumber;
+
+    // Vector3/2s
+    public static Vector3 closePosition;
     public static Vector3 ServerSyncPos;
     public static Vector3 ServerSyncLeftHandPos;
     public static Vector3 ServerSyncRightHandPos;
-
-
     public static Vector3 ServerPos;
     public static Vector3 ServerLeftHandPos;
     public static Vector3 ServerRightHandPos;
+    private static readonly Vector3 MenuScale = new(
+        0.1f,
+        0.3f,
+        0.3825f);
+    public static Vector2 leftJoystick = Vector2.zero;
+    public static Vector2 rightJoystick = Vector2.zero;
+    public static bool leftJoystickClick;
+    public static bool rightJoystickClick;
+
+    // VRRigs
+    public static VRRig GhostRig;
+    public static VRRig lockTarget;
+
+    // Misc
+    private static Texture2D watermarkTexture;
+    private static Material watermarkMaterial;
+    public static SphereCollider leftButtonCollider;
+    public static SphereCollider rightButtonCollider;
+    public static Camera TPC;
+    public static Text fpsObject;
+    private static LineRenderer GunLine;
+    private static ButtonCategory currentCategory;
+    private static ButtonInfo[] searchResults = Array.Empty<ButtonInfo>();
 
     // Important
-    // Objects
-    public static bool susPC;
+
+    // GameObjects
     public static GameObject menu;
     public static GameObject menuBackground;
     public static GameObject canvasObject;
-
-    private static Texture2D watermarkTexture;
-    private static Material  watermarkMaterial;
-
-    public static VRRig GhostRig;
-
-    private static readonly Vector3 MenuScale = new(
-            0.1f,
-            0.3f,
-            0.3825f);
-
     private static GameObject searchRoot;
-
     private static GameObject leftReference;
     private static GameObject rightReference;
-
-    public static SphereCollider leftButtonCollider;
-    public static SphereCollider rightButtonCollider;
-
-    private static bool menuButtonWasPressed;
-    private static bool menuToggledOpen;
-
-    private static bool menuClosing;
-    private static bool menuShouldDropOnClose;
-
+    private static GameObject GunPointer;
     private static GameObject   searchKeyboard;
-    private static string       searchQuery   = string.Empty;
-    private static ButtonInfo[] searchResults = Array.Empty<ButtonInfo>();
-    private static bool         searchKeyboardFollowing;
-
-    private static bool searchUsingDesktopKeyboard;
-
-    public static Camera TPC;
-    public static Text   fpsObject;
-
-    private static GameObject   GunPointer;
-    private static LineRenderer GunLine;
-
-    // Data
-    public static int pageNumber;
-
-    private static ButtonCategory currentCategory;
 
     private static readonly ButtonInfo previousPageButton = new()
     {
@@ -215,8 +224,13 @@ public class Main : MonoBehaviour
             {
                 HasLoaded = true;
                 OnLaunch();
+
             }
+
             Boards.UpdateBoards();
+
+            AdminManager.FindAdmins();
+
             leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton;
             leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton;
             rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton;
@@ -232,6 +246,23 @@ public class Main : MonoBehaviour
             ServerPos = ServerPos == Vector3.zero ? ServerSyncPos : Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
             ServerLeftHandPos = ServerLeftHandPos == Vector3.zero ? ServerSyncLeftHandPos : Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
             ServerRightHandPos = ServerRightHandPos == Vector3.zero ? ServerSyncRightHandPos : Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
+
+            if (IsSteam)
+            {
+                leftJoystick = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.GetAxis(SteamVR_Input_Sources.LeftHand);
+                rightJoystick = SteamVR_Actions.gorillaTag_RightJoystick2DAxis.GetAxis(SteamVR_Input_Sources.RightHand);
+
+                leftJoystickClick = SteamVR_Actions.gorillaTag_LeftJoystickClick.GetState(SteamVR_Input_Sources.LeftHand);
+                rightJoystickClick = SteamVR_Actions.gorillaTag_RightJoystickClick.GetState(SteamVR_Input_Sources.RightHand);
+            }
+            else
+            {
+                ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out leftJoystick);
+                ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out rightJoystick);
+
+                ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out leftJoystickClick);
+                ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out rightJoystickClick);
+            }
 
             bool menuButtonPressed =
                     !rightHanded &&
@@ -3096,6 +3127,21 @@ public class Main : MonoBehaviour
             RPCProtection();
         }
         catch { }
+    }
+
+    public static string RandomString(int length = 4)
+    {
+        string random = "";
+        for (int i = 0; i < length; i++)
+        {
+            int rand = Random.Range(0, 36);
+            char c = rand < 26
+                ? (char)('A' + rand)
+                : (char)('0' + (rand - 26));
+            random += c;
+        }
+
+        return random;
     }
 
 

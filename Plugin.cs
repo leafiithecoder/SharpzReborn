@@ -8,7 +8,7 @@ namespace SharpzReborn;
 
 [Description(PluginInfo.Description)]
 [BepInPlugin(
-        PluginInfo.Guid,
+        PluginInfo.GUID,
         PluginInfo.Name,
         PluginInfo.Version)]
 public class Plugin : BaseUnityPlugin
