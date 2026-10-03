@@ -1,10 +1,12 @@
 # Sharpz Reborn
 
+[Discord](https://discord.gg/wbxfF7KTF3)
+
 > A feature-rich, open-source Gorilla Tag mod menu built with C#.
 
 Sharpz Reborn is an open-source Gorilla Tag mod project focused on providing a large collection of customizable mods through a simple, organized menu.
 
-With **100+ mods**, Sharpz Reborn covers movement, player, room, visual, safety, and utility features — with the project remaining fully open source so the code can be inspected, modified, and contributed to.
+With **180+ mods**, Sharpz Reborn near to being one of the best free Gorilla Tag mod menus.
 
 ## Features
 
@@ -29,8 +31,6 @@ You can:
 * Submit changes through pull requests
 * Take your own code for your menu
 
-The goal is to keep the project transparent and accessible to new or professional developers who want to learn from or contribute to the codebase.
-
 ## Built With
 
 * **C#**
@@ -43,26 +43,10 @@ Sharpz Reborn is actively developed with a focus on expanding its mod library, i
 
 If you find a bug or have an idea for a feature, open an issue in the repository.
 
-## Contributing
-
-Contributions are welcome.
-
-If you want to contribute:
-
-1. Fork the repository.
-2. Create a new branch.
-3. Make your changes.
-4. Test your changes.
-5. Open a pull request.
-
-Please keep additions organized and consistent with the existing project structure.
-
-
-
 ## License
 
 See [`LICENSE`](LICENSE) for the license and usage terms.
 
 ---
 
-**Sharpz Reborn** — 100+ mods. Open source. Built to be customized.
+**Sharpz Reborn** — 180+ mods. Open source. Built to be customized.
