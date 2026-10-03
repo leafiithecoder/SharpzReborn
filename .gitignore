@@ -12,7 +12,6 @@
 *.userosscache
 *.sln.docstates
 
-*.cmd
 autogit.cmd
 deploygit.cmd
 
