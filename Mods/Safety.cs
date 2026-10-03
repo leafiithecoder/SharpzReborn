@@ -3,6 +3,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using SharpzReborn.Classes;
 using SharpzReborn.Extensions;
+using SharpzReborn.Managers;
 using SharpzReborn.Notifications;
 using System;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace SharpzReborn.Mods
 
                                if (!(Time.time > antiReportDelay)) return;
                                antiReportDelay = Time.time + 1f;
-                               NotifiLib.SendNotification($"{ModInfoNotif("ANTI-REPORT")} " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+                               NotificationManager.SendNotification($"{ModInfoNotif("ANTI-REPORT")} " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
                            });
         public static void NoFingerMovement()
         {
@@ -71,7 +72,7 @@ namespace SharpzReborn.Mods
                 flushCooldown = Time.time + 5f;
                 return;
             }
-            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not meant to spam Flush RPCs. Only call it once after you are done spamming RPCs.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not meant to spam Flush RPCs. Only call it once after you are done spamming RPCs.");
         }
 
         public static void AntiModerator()
@@ -85,7 +86,7 @@ namespace SharpzReborn.Mods
                 }
                 catch { }
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                NotifiLib.SendNotification($"{ModInfoNotif("ANTI-MODERATOR")} {vrrig.GetName()} is a moderator, you have been disconnected.");
+                NotificationManager.SendNotification($"{ModInfoNotif("ANTI-MODERATOR")} {vrrig.GetName()} is a moderator, you have been disconnected.");
             }
         }
 
@@ -115,12 +116,12 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
             AntiReport((vrrig, position) =>
             {
-                if (admins.Contains(vrrig.GetPlayer().UserId))
+                if (AdminManager.admins.Contains(vrrig.GetPlayer().UserId))
                 {
                     return;
                 }
@@ -137,7 +138,7 @@ namespace SharpzReborn.Mods
 
                 if (!(Time.time > antiReportDelay)) return;
                 antiReportDelay = Time.time + 1f;
-                NotifiLib.SendNotification($"{ModInfoNotif("ANTI-REPORT")} " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been kicked.");
+                NotificationManager.SendNotification($"{ModInfoNotif("ANTI-REPORT")} " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been kicked.");
                 reportRig = null;
             });
         }

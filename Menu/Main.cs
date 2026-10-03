@@ -23,6 +23,7 @@ using static SharpzReborn.Menu.Buttons;
 using static SharpzReborn.Menu.Settings;
 using Button = SharpzReborn.Classes.Button;
 using Random = UnityEngine.Random;
+using static SharpzReborn.Tools.Utilities;
 
 namespace SharpzReborn.Menu;
 
@@ -42,15 +43,9 @@ public class Main : MonoBehaviour
         // Room
         GameObject roomObject = new GameObject("SR_RoomClass");
         roomObject.AddComponent<Mods.Room>();
-
-        
-        Boards.SetLaunchBoards();
-
         ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;
-
         IsSteam = PlayFabAuthenticator.instance.platform;
-
-        AdminManager.LoadWatermark();
+        Init();
     }
 
     // Fields
@@ -87,6 +82,7 @@ public class Main : MonoBehaviour
     private static bool menuClosing;
     private static bool menuShouldDropOnClose;
     private static bool searchKeyboardFollowing;
+    public static bool showLocalAdminIcon;
 
     // Strings
     public static string CosmeticsOwned;
@@ -96,8 +92,7 @@ public class Main : MonoBehaviour
     public static string info = "<color=grey>[</color><color=purple>INFO</color><color=grey>]</color>";
     private static string searchQuery = string.Empty;
 
-    public static List<string> admins = ["9B9FC7722B67BBC0", "D3B707D5F31FC1F7"];
-    // admin1=sharpz, admin2=legcup
+    // moved admin data to json
 
     // Integers
     private static int? noInvisLayerMask;
@@ -230,6 +225,7 @@ public class Main : MonoBehaviour
             Boards.UpdateBoards();
 
             AdminManager.FindAdmins();
+            AdminManager.CheckAdminPanel();
 
             leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton;
             leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton;
@@ -792,6 +788,7 @@ public class Main : MonoBehaviour
                     };
         }
 
+        
         GameObject watermark =
                 GameObject.CreatePrimitive(
                         PrimitiveType.Quad);
@@ -1437,6 +1434,7 @@ public class Main : MonoBehaviour
 
             return;
         }
+
 
         CreateButtonObject(
                 method,
@@ -2110,7 +2108,7 @@ public class Main : MonoBehaviour
 
                 if (target.enabled)
                 {
-                    NotifiLib.SendNotification(
+                    NotificationManager.SendNotification(
                             "<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " +
                             target.toolTip);
 
@@ -2128,7 +2126,7 @@ public class Main : MonoBehaviour
                 }
                 else
                 {
-                    NotifiLib.SendNotification(
+                    NotificationManager.SendNotification(
                             "<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " +
                             target.toolTip);
 
@@ -3144,5 +3142,35 @@ public class Main : MonoBehaviour
         return random;
     }
 
+    public static bool isAdmin;
+    private static bool adminPanelAdded;
 
+    public static void SetupAdminPanel()
+    {
+        if (adminPanelAdded)
+            return;
+
+        if (!AdminManager.IsLocalAdmin(PhotonNetwork.LocalPlayer.UserId))
+            return;
+
+        ButtonCategory mainCategory =
+            Categories.First(category => category.name == "Main");
+
+        List<ButtonInfo> buttons =
+            mainCategory.buttons.ToList();
+
+        buttons.Add(new ButtonInfo
+        {
+            buttonText = "Admin",
+            method = () => SetCategory("Admin"),
+            mode = ButtonMode.Action,
+            isCategory = true,
+            toolTip = "Opens the admin mods."
+        });
+
+        mainCategory.buttons = buttons.ToArray();
+
+        adminPanelAdded = true;
+        isAdmin = true;
+    }
 }

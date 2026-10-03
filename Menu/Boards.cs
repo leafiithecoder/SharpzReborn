@@ -13,7 +13,7 @@ namespace SharpzReborn.Menu
 
     public class Boards
     {
-        public static string Title = "Sharpz Reborn";
+        public static string Title = $"Sharpz Reborn {Main.ModInfoNotif("V5")}";
 
         public static string MOTDDefault = "Welcome to Sharpz Reborn! A menu made by Sharpz.\n " +
             "This menu is completely free and open sourced, if you paid for this menu you have been <color=red>scammed.</color>\n" +

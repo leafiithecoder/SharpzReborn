@@ -23,7 +23,7 @@ public class Plugin : BaseUnityPlugin
                 OnPlayerSpawned);
     }
 
-    private void OnApplicationQuit() => Preferences.Save();
+    private void OnApplicationQuit() { Tools.Utilities.Shutdown(); }
 
     private void OnPlayerSpawned()
     {

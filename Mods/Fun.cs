@@ -289,9 +289,28 @@ namespace SharpzReborn.Mods
         public static void CopySelfID()
         {
             string id = PhotonNetwork.LocalPlayer.UserId;
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id);
             GUIUtility.systemCopyBuffer = id;
         }
 
+        private static float soundSpamDelay;
+        public static void SoundSpam(int soundId, bool constant = false)
+        {
+            if (rightGrab || constant)
+            {
+                if (Time.time > soundSpamDelay)
+                    soundSpamDelay = Time.time + 0.1f;
+                else
+                    return;
+
+                if (NetworkSystem.Instance.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, soundId, false, 999999f);
+                    RPCProtection();
+                }
+                else
+                    VRRig.LocalRig.PlayHandTapLocal(soundId, false, 999999f);
+            }
+        }
     }
 }

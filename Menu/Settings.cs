@@ -451,7 +451,7 @@ public class Settings
     [SavedSetting] public static bool rightHanded;
     [SavedSetting] public static bool disableNotifications;
 
-    [SavedSetting] public static KeyCode keyboardButton = KeyCode.Q;
+    [SavedSetting] public static KeyCode keyboardButton = KeyCode.RightShift;
 
     [SavedSetting] public static Vector3 menuSize       = new(0.1f, 1f, 1f); // Depth, width, height
     [SavedSetting] public static int     buttonsPerPage = 8;

@@ -19,13 +19,13 @@ namespace SharpzReborn.Mods
             if (PhotonNetwork.IsMasterClient)
             {
                 AddInfected(PhotonNetwork.LocalPlayer);
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
             }
             else
             {
                 if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> You have been tagged.");
                     VRRig.LocalRig.enabled = true;
                 }
                 else
@@ -47,7 +47,7 @@ namespace SharpzReborn.Mods
         public static void UntagAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification($"{fail} You are not master client.");
+                NotificationManager.SendNotification($"{fail} You are not master client.");
             else
             {
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
@@ -58,7 +58,7 @@ namespace SharpzReborn.Mods
         public static void DisableTags()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification($"{fail} You are not master client.");
+                NotificationManager.SendNotification($"{fail} You are not master client.");
             else
             {
                 if (vbux == 2)
@@ -67,7 +67,7 @@ namespace SharpzReborn.Mods
                         RemoveInfected(v);
                 }
             }
-            NotifiLib.SendNotification($"{warning} You should Flush RPCs after this.");
+            NotificationManager.SendNotification($"{warning} You should Flush RPCs after this.");
             vbux++;
         }
 
@@ -153,14 +153,14 @@ namespace SharpzReborn.Mods
                     AddInfected(v);
 
                 TurnOff();
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Everyone is tagged!");
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Everyone is tagged!");
             }
             else
             {
 
                 if (!VRRig.LocalRig.IsTagged())
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be tagged.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be tagged.");
                     TurnOff();
                 }
                 else
@@ -180,7 +180,7 @@ namespace SharpzReborn.Mods
                     }
                     else
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Everyone is tagged!");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Everyone is tagged!");
                         VRRig.LocalRig.enabled = true;
                         TurnOff();
                     }
@@ -211,7 +211,7 @@ namespace SharpzReborn.Mods
                 {
                     if (!PhotonNetwork.IsMasterClient)
                     {
-                        NotifiLib.SendNotification($"{fail} You are not the master client.");
+                        NotificationManager.SendNotification($"{fail} You are not the master client.");
                         gunLocked = false;
                         lockTarget = null;
                         return;

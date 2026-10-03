@@ -2,29 +2,31 @@
 using GorillaNetworking;
 using SharpzReborn.Classes;
 using SharpzReborn.Mods;
+using SharpzReborn.Notifications;
+using SharpzReborn.Patches;
+using SharpzReborn.Patches.Internal;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using static SharpzReborn.Menu.Main;
-using SharpzReborn.Patches;
-using SharpzReborn.Patches.Internal;
-
 namespace SharpzReborn.Menu
 {
     public static class Buttons
     {
             public static ButtonInfo[] MainMods =
             [
-                new() { buttonText = "Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the settings menu." },
-                new() { buttonText = "Room", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the room mods menu." },
+                new() { buttonText = "Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the settings." },
+                new() { buttonText = "Join Discord", method = () => Process.Start("https://discord.gg/bmk4VzvcZc"), mode = ButtonMode.Action, toolTip = "Joins the Discord server for the menu." },
+                new() { buttonText = "Room", method = () => SetCategory("Room Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the room mods." },
                 new() { buttonText = "Movement", method = () => SetCategory("Movement Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the movement mods." },
                 new() { buttonText = "Safety", method = () => SetCategory("Safety Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the safety mods." },
                 new() { buttonText = "Visual", method = () => SetCategory("Visual Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the visual mods." },
-                new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods menu." },
+                new() { buttonText = "Player", method = () => SetCategory("Player Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the player mods." },
                 new() { buttonText = "Fun", method = () => SetCategory("Fun Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the fun mods." },
                 new() { buttonText = "Overpowered", method = () => SetCategory("Overpowered Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the OP mods." },
-                new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the advantage mods menu." },
+                new() { buttonText = "Advantage", method = () => SetCategory("Advantage Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the advantage mods." },
                 new() { buttonText = "Important", method = () => SetCategory("Important Mods"), mode = ButtonMode.Action, isCategory = true,toolTip = "Opens the important mods." },
             ];
 
@@ -40,7 +42,7 @@ namespace SharpzReborn.Menu
             [
                 new() { buttonText = "Exit Menu Settings", method = () => SetCategory("Settings"), mode = ButtonMode.Action, isCategory = true,toolTip = "Returns to the main settings page." },
 
-                new() { buttonText = "Clear Notifications", method = Notifications.NotifiLib.ClearAllNotifications, mode = ButtonMode.Action, toolTip = "Clears all notifications from the menu."},
+                new() { buttonText = "Clear Notifications", method = Notifications.NotificationManager.ClearAllNotifications, mode = ButtonMode.Action, toolTip = "Clears all notifications from the menu."},
                 new() { buttonText = "Right Handed Menu", enableMethod = () => Menu.Settings.rightHanded = true, disableMethod = () => Menu.Settings.rightHanded = false, enabled = Menu.Settings.rightHanded, mode = ButtonMode.Toggle, toolTip = "Moves the menu to your right hand." },
                 new() { buttonText = "COC Room History", enableMethod = RoomHistory.Enable, disableMethod = RoomHistory.Disable, toolTip = "Displays recent rooms on the COC board."},
                 new() { buttonText = "Disable Notifications", enableMethod = () => Menu.Settings.disableNotifications = true, disableMethod = () => Menu.Settings.disableNotifications = false, enabled = Menu.Settings.disableNotifications, mode = ButtonMode.Toggle, toolTip = "Disables notifications." },
@@ -126,7 +128,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Noclip Fly『A』", method = Mods.Movement.NoclipFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A and lets you phase through walls." },
                 new() { buttonText = "Trigger Fly『T』", method = Mods.Movement.TriggerFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding your right trigger." },
                 new() { buttonText = "WASD Fly", enableMethod = Mods.Movement.EnableWASDFly, method = Mods.Movement.WASDFly, disableMethod = () => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), mode = ButtonMode.Toggle, toolTip = "Moves you around with WASD." },
-                new() { buttonText = "Bark Fly", enableMethod = Mods.Movement.BarkFly, mode = ButtonMode.Toggle, toolTip = "Moves you around with your joysticks. Credit: KyleTheScientist" },
+                new() { buttonText = "Bark Fly『BK』", enableMethod = Mods.Movement.BarkFly, mode = ButtonMode.Toggle, toolTip = "Moves you around with your joysticks. Credit: KyleTheScientist" },
                 new() { buttonText = "Teleport Gun", method = Mods.Movement.TeleportGun, mode = ButtonMode.Toggle, toolTip = "Teleports you to the pointer position when you press the trigger." },
                 new() { buttonText = "Speed Boost", method = Mods.Movement.SpeedBoost, mode = ButtonMode.Toggle, toolTip = "Increases your movement speed." },
                 new() { buttonText = "Noclip『T』", method = Mods.Movement.Noclip, mode = ButtonMode.Toggle, toolTip = "Allows you to move through walls." },
@@ -204,10 +206,10 @@ namespace SharpzReborn.Menu
 
                 new() { buttonText = "Tag Self", method = Advantages.TagSelf, mode = ButtonMode.Toggle, toolTip = "Makes you tagged." },
                 new() { buttonText = "Tag Gun", method = Advantages.TagGun, mode = ButtonMode.Toggle, toolTip = "Allows you to tag other players while you are tagged using a gun." },
-                new() { buttonText = "Tag All『M』", method = Advantages.TagAll, mode = ButtonMode.Action, toolTip = "Tags everyone in the room." },
+                new() { buttonText = "Tag All『M?』", method = Advantages.TagAll, mode = ButtonMode.Toggle, toolTip = "Tags everyone in the room." },
                 new() { buttonText = "Untag All『M』", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tagged state from everyone." },
                 new() { buttonText = "Untag Gun『M』", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tagged state from the player you target with the gun." },
-                new() { buttonText = "Disable Tags『M』", method = Advantages.DisableTags, mode = ButtonMode.Toggle, disableMethod = Notifications.NotifiLib.ClearAllNotifications, toolTip = "Continuously removes the tagged state from everyone." },
+                new() { buttonText = "Disable Tags『M』", method = Advantages.DisableTags, mode = ButtonMode.Toggle, disableMethod = Notifications.NotificationManager.ClearAllNotifications, toolTip = "Continuously removes the tagged state from everyone." },
                 new() { buttonText = "Flick Tag Gun『BK』", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
             ];
 
@@ -253,8 +255,9 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Get Free VIM", enableMethod =() => SubscriptionPatches.enabled = true, disableMethod =() => SubscriptionPatches.enabled = false, toolTip = "Unlocks VIM." },
                 new() { buttonText = "VIM Mods", method =() => SetCategory("VIM"), mode = ButtonMode.Action, toolTip = "Opens the VIM mods tab."},
 
+                new() { buttonText = "Leak Live Event『CS』", method = OP.LeakLive, mode = ButtonMode.Action, toolTip = "Leaks the latest live event."},
                 new() { buttonText = "Stump Kick Gun", method = OP.StumpKickGun, mode = ButtonMode.Toggle, toolTip = "Allows you to kick players within Stump with a gun."},
-                new() { buttonText = "Stump Kick All", method = OP.StumpKickAll, mode = ButtonMode.Toggle, toolTip = "Kicks everyone in Stump."},
+                new() { buttonText = "Stump Kick All", method = OP.StumpKickAll, mode = ButtonMode.Action, toolTip = "Kicks everyone in Stump."},
                 new() { buttonText = "Slow Gun『M』『BK』", method = OP.SlowGun, mode = ButtonMode.Toggle, toolTip = "Slows the player you target." },
                 new() { buttonText = "Vibrate Gun『M』『BK』", method = OP.VibrateGun, mode = ButtonMode.Toggle, toolTip = "Vibrates the player you target." },
                 new() { buttonText = "Rock To Infection", method = OP.TagToInfection, mode = ButtonMode.Action, toolTip = "Changes the game mode." },
@@ -287,6 +290,21 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Hard Rainbow Color [CS?]", method = Fun.HardRainbowColor, mode = ButtonMode.Toggle, toolTip = "Makes you rainbow with no transition."}
             ];
 
+            public static ButtonInfo[] AdminMods =
+            [
+                new() { buttonText = "Exit Admin Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+                new() { buttonText = "Admin Kick Gun", method = Admin.AdminKickGun, mode = ButtonMode.Toggle, toolTip = "Kicks the player you target that is using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Kick All", method = Admin.AdminKickAll, mode = ButtonMode.Action, toolTip = "Kicks everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Crash Gun", method = Admin.AdminCrashGun, mode = ButtonMode.Toggle, toolTip = "Crashes the player you target that is using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Crash All", method = Admin.AdminCrashAll, mode = ButtonMode.Action, toolTip = "Crashes everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Lag Gun", method = Admin.AdminLagGun, mode = ButtonMode.Toggle, toolTip = "Lags the player you target that is using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Lag All", method = Admin.AdminLagAll, mode = ButtonMode.Toggle, disableMethod = Admin.AdminUnlagAll, toolTip = "Lags everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Close Lobby Kick", method = Admin.AdminKickAll, mode = ButtonMode.Toggle, toolTip = "Closes the lobby by kicking everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Close Lobby Crash", method = Admin.AdminCrashAll, mode = ButtonMode.Toggle, toolTip = "Closes the lobby by crashing everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Annoy Lobby Lag", method = Admin.AdminLagAll, mode = ButtonMode.Toggle, toolTip = "Annoys the lobby by lagging everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Annoy Lobby Sound", method = Admin.AdminAnnoyLobby, mode = ButtonMode.Toggle, toolTip = "Annoys the lobby by spamming sounds for everyone using the menu. [ADMIN]" },
+            ];
+
             public static ButtonCategory[] Categories =
             [
                 new() { name = "Main", buttons = MainMods },
@@ -302,6 +320,7 @@ namespace SharpzReborn.Menu
                 new() { name = "Advantage Mods", buttons = AdvantageMods },
                 new() { name = "Fun Mods", buttons = FunMods },
                 new() { name = "Overpowered Mods", buttons = OpMods},
+                new() { name = "Admin", buttons = OpMods},
                 new() { name = "VIM", buttons = VIMMods},
                 new() { name = "Important Mods", buttons = ImportantMods },
             ];

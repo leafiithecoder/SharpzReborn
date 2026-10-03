@@ -9,7 +9,7 @@ using static SharpzReborn.Menu.Settings;
 namespace SharpzReborn.Notifications;
 
 [BepInPlugin("org.gorillatag.lars.notifications2", "NotificationLibrary", "1.0.5")]
-public class NotifiLib : BaseUnityPlugin
+public class NotificationManager : BaseUnityPlugin
 {
 
     public static int NoticationThreshold = 30;
@@ -152,8 +152,8 @@ public class NotifiLib : BaseUnityPlugin
                         notificationText += Environment.NewLine;
                     }
 
-                    NotifiLib.notificationText.text            += notificationText;
-                    NotifiLib.notificationText.supportRichText =  true;
+                    NotificationManager.notificationText.text            += notificationText;
+                    NotificationManager.notificationText.supportRichText =  true;
                     PreviousNotification                       =  notificationText;
                 }
             }
@@ -165,7 +165,7 @@ public class NotifiLib : BaseUnityPlugin
     }
 
     public static void ClearAllNotifications() =>
-            //NotifiLib.NotifiText.text = "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Notifications cleared.</color>" + Environment.NewLine;
+            //NotificationManager.NotifiText.text = "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Notifications cleared.</color>" + Environment.NewLine;
             notificationText.text = "";
 
     public static void ClearPastNotifications(int amount)

@@ -1,9 +1,13 @@
 ﻿using GorillaGameModes;
 using GorillaNetworking;
+using SharpzReborn.classes;
+using SharpzReborn.Classes;
+using SharpzReborn.Managers;
+using SharpzReborn.Menu;
 
 namespace SharpzReborn.Tools
 {
-    public class Utils
+    public class Utilities
     {
         public static string GetCurrentGamemode()
         {
@@ -49,6 +53,26 @@ namespace SharpzReborn.Tools
             };
 
             GorillaServer.Instance.BroadcastMyRoom(broadcastMyRoomRequest, delegate { }, delegate { });
+        }
+
+        public static string Map(VRRig r)
+        {
+            return EnumUtilExt.GetName<GTZone>(r.zoneEntity.currentZone);
+        }
+
+        public static void Init()
+        {
+            CoroutineManager.Instance.StartCoroutine(AdminManager.WaitForAdminPanel());
+            SharpzServerData.Load();
+            SharpzNetwork.Initialize();
+            AdminManager.LoadWatermark();
+            Boards.SetLaunchBoards();
+        }
+
+        public static void Shutdown()
+        {
+            SharpzNetwork.Shutdown();
+            Preferences.Save();
         }
     }
 }

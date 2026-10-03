@@ -24,7 +24,7 @@ namespace SharpzReborn.Classes
         public Action       method          = null;
         public ButtonMode   mode            = ButtonMode.Toggle;
         public string       overlapText     = null;
-        public string       toolTip         = "This button doesn't have a tooltip/tutorial.";
+        public string toolTip = "This button doesn't have a tooltip/tutorial.";
 
         public bool isCategory = false;
 

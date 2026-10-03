@@ -1,11 +1,12 @@
 ﻿using GorillaLocomotion;
+using Photon.Realtime;
 using SharpzReborn.Classes;
+using SharpzReborn.Menu;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR;
-using static SharpzReborn.Menu.Main;
 using static SharpzReborn.Menu.Buttons;
-using SharpzReborn.Menu;
+using static SharpzReborn.Menu.Main;
 
 namespace SharpzReborn.Mods;
 
@@ -124,6 +125,120 @@ public abstract class Movement
             platr = null;
         }
     }
+
+    public static void NetworkedPlats()
+    {
+        bool leftActive;
+        bool rightActive;
+
+        if (triggerPlatforms)
+        {
+            leftActive = Mouse.current.leftButton.isPressed;
+            rightActive = Mouse.current.rightButton.isPressed;
+        }
+        else
+        {
+            leftActive = ControllerInputPoller.instance.leftGrab;
+            rightActive = ControllerInputPoller.instance.rightGrab;
+        }
+
+        if (leftActive)
+        {
+            if (platl == null)
+            {
+                platl = GameObject.CreatePrimitive(
+                    PrimitiveType.Cube
+                );
+
+                platl.transform.localScale =
+                    new Vector3(0.025f, 0.3f, 0.4f);
+
+                platl.transform.position =
+                    TrueLeftHand().position +
+                    TrueLeftHand().right * 0.05f;
+
+                platl.transform.rotation =
+                    TrueLeftHand().rotation;
+
+                FixStickyColliders(platl);
+
+                ColorChanger colorChanger =
+                    platl.AddComponent<ColorChanger>();
+
+                colorChanger.colors =
+                    Menu.Settings.backgroundColor;
+
+                SharpzNetwork.Send(
+                    "platform",
+                    ReceiverGroup.Others,
+                    "left",
+                    platl.transform.position,
+                    platl.transform.localScale,
+                    platl.transform.eulerAngles
+                );
+            }
+        }
+        else if (platl != null)
+        {
+            SharpzNetwork.Send(
+                "platformDestroy",
+                ReceiverGroup.Others,
+                "left"
+            );
+
+            Object.Destroy(platl);
+            platl = null;
+        }
+
+        if (rightActive)
+        {
+            if (platr == null)
+            {
+                platr = GameObject.CreatePrimitive(
+                    PrimitiveType.Cube
+                );
+
+                platr.transform.localScale =
+                    new Vector3(0.025f, 0.3f, 0.4f);
+
+                platr.transform.position =
+                    TrueRightHand().position -
+                    TrueRightHand().right * 0.05f;
+
+                platr.transform.rotation =
+                    TrueRightHand().rotation;
+
+                FixStickyColliders(platr);
+
+                ColorChanger colorChanger =
+                    platr.AddComponent<ColorChanger>();
+
+                colorChanger.colors =
+                    Menu.Settings.backgroundColor;
+
+                SharpzNetwork.Send(
+                    "platform",
+                    ReceiverGroup.Others,
+                    "right",
+                    platr.transform.position,
+                    platr.transform.localScale,
+                    platr.transform.eulerAngles
+                );
+            }
+        }
+        else if (platr != null)
+        {
+            SharpzNetwork.Send(
+                "platformDestroy",
+                ReceiverGroup.Others,
+                "right"
+            );
+
+            Object.Destroy(platr);
+            platr = null;
+        }
+    }
+
     public static void TeleportGun()
     {
         if (GetGunInput(false))

@@ -6,7 +6,7 @@ using static SharpzReborn.Menu.BoardType;
 
 namespace SharpzReborn.Classes;
 
-public class RoomHistory
+public class RoomHistory // hell aswell
 {
     private static readonly List<string> History = new();
 

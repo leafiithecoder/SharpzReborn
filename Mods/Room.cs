@@ -17,7 +17,7 @@ namespace SharpzReborn.Mods
             Debug.Log($"Sharpz Reborn // Join failed: {returnCode} | {message}");
 
             if (returnCode == 32765)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Room is full.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Room is full.");
         }
 
         public static string lastRoom = "";
@@ -66,10 +66,10 @@ namespace SharpzReborn.Mods
             string masterName = PhotonNetwork.MasterClient.NickName;
             if (!PhotonNetwork.IsMasterClient)
             {
-                Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=red>FAIL</color><color=grey>] </color><color=white>You are not the master client, " + masterName + " is the current master client.</color>");
+                Notifications.NotificationManager.SendNotification("<color=grey>[</color><color=red>FAIL</color><color=grey>] </color><color=white>You are not the master client, " + masterName + " is the current master client.</color>");
                 return;
             }
-            Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>] </color><color=white>You are the master client.</color>");
+            Notifications.NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>] </color><color=white>You are the master client.</color>");
         }
         public static Coroutine queueCoroutine;
         public static int reconnectDelay = 1;

@@ -19,11 +19,13 @@ using static SharpzReborn.Menu.Main;
 using Random = UnityEngine.Random;
 using GorillaTag;
 using System;
+using GorillaTagScripts;
+using SharpzReborn.classes;
 
 namespace SharpzReborn.Mods
 {
     public class OP
-    {// alot of credits to some other menu most of these methods aren't mine
+    {// alot of credits to some other menus most of these methods aren't mine
         #region Misc
 
         private static float reportDelay;
@@ -45,19 +47,19 @@ namespace SharpzReborn.Mods
 
                         if (VRRig.LocalRig.IsTagged())
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be tagged.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be tagged.");
                             return;
                         }
 
                         if (!lockTarget.IsTagged())
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The target must be tagged.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The target must be tagged.");
                             return;
                         }
 
                         if (PhotonNetwork.IsMasterClient)
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be master client.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be master client.");
                             return;
                         }
 
@@ -101,7 +103,7 @@ namespace SharpzReborn.Mods
         public static void BetaSetStatus(RoomSystem.StatusEffects state, RaiseEventOptions reo)
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                Notifications.NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
             else
             {
                 object[] statusSendData = new object[1];
@@ -224,7 +226,7 @@ namespace SharpzReborn.Mods
             if (friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) && friendCollider.playerIDsCurrentlyTouching.Contains(player.UserId) && player != PhotonNetwork.LocalPlayer)
                 RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
             else if (!friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
         }
 
         public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = false)
@@ -253,7 +255,7 @@ namespace SharpzReborn.Mods
 
         public static void CreateKickRoom()
         {
-             Tools.Utils.BroadcastRoom(RandomString(), true, PhotonNetworkController.Instance.keyToFollow, PhotonNetworkController.Instance.shuffler);
+             Tools.Utilities.BroadcastRoom(RandomString(), true, PhotonNetworkController.Instance.keyToFollow, PhotonNetworkController.Instance.shuffler);
              Room.Reconnect();
         }
 
@@ -275,13 +277,13 @@ namespace SharpzReborn.Mods
 
                         if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId))
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The player must be in stump.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The player must be in stump.");
                             return;
                         }
 
                         if (!NetworkSystem.Instance.SessionIsPrivate)
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
                             return;
                         }
 
@@ -307,7 +309,7 @@ namespace SharpzReborn.Mods
             {
                 if (!NetworkSystem.Instance.SessionIsPrivate)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
                     return;
                 }
 
@@ -326,7 +328,243 @@ namespace SharpzReborn.Mods
                 }));
             }
             else
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+        }
+
+        public static void LeakLive()
+        {
+            if (Tools.Utilities.Map(VRRig.LocalRig) != "city")
+            {
+                NotificationManager.SendNotification(
+                    $"{fail} You must be in the City map!"
+                );
+
+                return;
+            }
+
+            GorillaEventAnimationController controller =
+                GameObject.Find("10_02_ArrivalExperience") // current live
+                    .GetComponent<GorillaEventAnimationController>();
+
+            if (controller.playAnimation)
+            {
+                NotificationManager.SendNotification(
+                    $"{fail} Live event is already playing."
+                );
+
+                return;
+            }
+
+            controller.StartPlaying();
+        }
+
+        public static HalloweenGhostChaser _lucy;
+        public static HalloweenGhostChaser Lucy
+        {
+            get
+            {
+                _lucy ??= GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+                return _lucy;
+            }
+            set => _lucy = value;
+        }
+
+        public static LurkerGhost _lurker;
+        public static LurkerGhost Lurker
+        {
+            get
+            {
+                _lurker ??= GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lurker Ghost/GhostLurker_Prefab").GetComponent<LurkerGhost>();
+                return _lurker;
+            }
+            set => _lurker = value;
+        }
+
+        public static void SpawnBlueLucy()
+        {
+            HalloweenGhostChaser hgc = Lucy;
+            if (hgc.IsMine)
+            {
+                hgc.timeGongStarted = Time.time;
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
+                hgc.isSummoned = false;
+            }
+            else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void SpawnRedLucy()
+        {
+            HalloweenGhostChaser hgc = Lucy;
+            if (hgc.IsMine)
+            {
+                hgc.timeGongStarted = Time.time;
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
+                hgc.isSummoned = true;
+            }
+            else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void DespawnLucy()
+        {
+            HalloweenGhostChaser hgc = Lucy;
+            if (hgc.IsMine)
+            {
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Dormant;
+                hgc.isSummoned = false;
+            }
+            else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void LucyChase(NetPlayer player)
+        {
+            HalloweenGhostChaser hgc = Lucy;
+            if (hgc.IsMine)
+            {
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
+                hgc.targetPlayer = player;
+                hgc.followTarget = GorillaTagger.Instance.offlineVRRig.transform;
+            }
+            else
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void LucyChaseGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                        LucyChase(gunTarget.GetPlayer());
+                }
+            }
+        }
+
+        public static void LucyAttack(NetPlayer player)
+        {
+            HalloweenGhostChaser hgc = Lucy;
+            if (hgc.IsMine)
+            {
+                if (Time.time > hgc.grabTime + hgc.grabDuration + 0.1f)
+                {
+                    if (hgc.targetPlayer != player)
+                    {
+                        hgc.currentState = HalloweenGhostChaser.ChaseState.Dormant;
+                        SendSerialize(hgc.GetView);
+                    }
+                    hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
+                    hgc.grabTime = Time.time;
+                    hgc.targetPlayer = player;
+                }
+            }
+            else
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void LucyAttackGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    LucyAttack(lockTarget.GetPlayer());
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void SpawnLurker()
+        {
+            if (Lurker.IsMine)
+                Lurker.currentState = LurkerGhost.ghostState.patrol;
+            else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void MoveLurkerGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (Lurker.IsMine)
+                        Lurker.transform.position = NewPointer.transform.position + Vector3.up;
+                    else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                }
+            }
+        }
+
+        public static void DespawnLurker()
+        {
+            if (Lurker.IsMine)
+            {
+                Lurker.currentState = LurkerGhost.ghostState.patrol;
+            }
+            else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void LurkerAttack(NetPlayer player)
+        {
+            if (Lurker.IsMine)
+            {
+                if (Lurker.targetPlayer != player)
+                {
+                    Lurker.ChangeState(LurkerGhost.ghostState.patrol);
+                    SendSerialize(Lurker.GetView);
+                }
+
+                Lurker.currentState = LurkerGhost.ghostState.possess;
+                Lurker.targetPlayer = player;
+            }
+            else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void LurkerAttackGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    LurkerAttack(lockTarget.GetPlayer());
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
         }
 
         #endregion
@@ -334,7 +572,7 @@ namespace SharpzReborn.Mods
         public static void InfectionToTag()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
             else
             {
                 GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
@@ -345,7 +583,7 @@ namespace SharpzReborn.Mods
         public static void TagToInfection()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
             else
             {
                 GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
@@ -368,7 +606,7 @@ namespace SharpzReborn.Mods
                 return;
             }
 
-            if (admins.Contains(target.GetPlayer().UserId))
+            if (AdminManager.admins.Contains(target.GetPlayer().UserId))
             {
                 return;
             } 
@@ -391,7 +629,7 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
@@ -414,7 +652,7 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
@@ -426,7 +664,7 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
@@ -441,7 +679,7 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
@@ -461,7 +699,7 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
@@ -475,7 +713,7 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
@@ -491,7 +729,7 @@ namespace SharpzReborn.Mods
         {
             if (!VRRig.LocalRig.IsVIMSubscriber())
             {
-                NotifiLib.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
+                NotificationManager.SendNotification($"{warning} You are not a VIM subscriber, so this mod will not function.");
                 return;
             }
 
