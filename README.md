@@ -17,7 +17,7 @@
 
 ## About
 
-Sharpz Reborn is an open-source Gorilla Tag mod menu with **180+ mods**.
+Sharpz Reborn is an open-source Gorilla Tag mod menu with **200+ mods**.
 
 It is made to provide additional features and customization while improving the overall game experience.
 
@@ -37,7 +37,7 @@ Sharpz Reborn includes mods for areas such as:
 
 ## Features
 
-- **180+ mods**
+- **200+ mods**
 - PC and VR support
 - Customizable settings
 - Category-based menu
@@ -84,6 +84,6 @@ See [`LICENSE`](LICENSE) for the license and usage terms.
 
 **Sharpz Reborn**
 
-*180+ mods · Open source · Made to improve the game experience.*
+*200+ mods · Open source · Made to improve the game experience.*
 
 </div>
