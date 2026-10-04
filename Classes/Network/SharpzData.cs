@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Valve.Newtonsoft.Json.Linq;
 
-namespace SharpzReborn.classes
+namespace SharpzReborn.Classes.Network
 {
     public static class SharpzServerData
     {

@@ -1,6 +1,7 @@
 ﻿using GorillaLocomotion;
 using Photon.Realtime;
 using SharpzReborn.Classes;
+using SharpzReborn.Classes.Network;
 using SharpzReborn.Menu;
 using UnityEngine;
 using UnityEngine.InputSystem;

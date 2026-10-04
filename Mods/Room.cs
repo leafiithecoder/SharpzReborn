@@ -7,6 +7,7 @@ using UnityEngine;
 using static SharpzReborn.Menu.Buttons;
 using static SharpzReborn.Menu.Main;
 using SharpzReborn.Classes;
+using SharpzReborn.Utilities;
 
 namespace SharpzReborn.Mods
 {
@@ -25,7 +26,15 @@ namespace SharpzReborn.Mods
         public override void OnJoinedRoom()
         {
             lastRoom = PhotonNetwork.CurrentRoom.Name;
-            RoomHistory.Add(PhotonNetwork.CurrentRoom.Name);
+            RoomHistory.Add(PhotonNetwork.CurrentRoom.Name + $" [{Tools.Utilities.GetCurrentGamemodeColor()}]");
+        }
+
+        public override void OnPlayerEnteredRoom(
+            Photon.Realtime.Player newPlayer)
+        {
+            base.OnPlayerEnteredRoom(newPlayer);
+
+            NetworkedObject.SyncToPlayer(newPlayer);
         }
 
         public override void OnLeftRoom()
@@ -119,17 +128,22 @@ namespace SharpzReborn.Mods
             Debug.Log("Sharpz Reborn // Queue coroutine started");
         }
 
-        public static void Reconnect()
+        public static void Reconnect() // this is just copy of joinlastroom im too lazy to change it
         {
-            string roomName = NetworkSystem.Instance.RoomName;
+            if (PhotonNetwork.InRoom || string.IsNullOrEmpty(lastRoom))
+                return;
 
-            NetworkSystem.Instance.ReturnToSinglePlayer();
-            QueueRoom(roomName);
+            QueueRoom(lastRoom);
         }
 
         public static void JoinMenuRoom()
         {
-            PhotonNetworkController.Instance.AttemptToAutoJoinSpecificRoom("sharpzReborn$", JoinType.Solo);
+            PhotonNetworkController.Instance.AttemptToAutoJoinSpecificRoom("sharpz.reborn$", JoinType.Solo);
+        }
+
+        public static void JoinMenuRoomVersion()
+        {
+            PhotonNetworkController.Instance.AttemptToAutoJoinSpecificRoom($"sharpz.reborn${PluginInfo.Version}", JoinType.Solo);
         }
 
         public static void QueueJoinRoom(string roomName)

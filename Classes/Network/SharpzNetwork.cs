@@ -7,7 +7,7 @@ using System.Threading;
 using UnityEngine;
 using static SharpzReborn.Menu.Main;
 
-namespace SharpzReborn.Classes
+namespace SharpzReborn.Classes.Network
 {
     public static class SharpzNetwork
     {
@@ -159,6 +159,93 @@ namespace SharpzReborn.Classes
                 case "noti":
                     Notifications.NotificationManager.SendNotification((string)args[1]);
                     break;
+                case "net_spawn":
+                    {
+                        int networkId = (int)args[1];
+                        int ownerActor = (int)args[2];
+                        PrimitiveType primitiveType = (PrimitiveType)(byte)args[3];
+
+                        Vector3 position = (Vector3)args[4];
+                        Quaternion rotation = (Quaternion)args[5];
+                        Vector3 scale = (Vector3)args[6];
+
+                        if (NetworkedObject.Get(networkId) != null)
+                            break;
+
+                        GameObject obj = GameObject.CreatePrimitive(primitiveType);
+
+                        obj.transform.SetPositionAndRotation(
+                            position,
+                            rotation
+                        );
+
+                        obj.transform.localScale = scale;
+
+                        NetworkedObject networkedObject =
+                            obj.AddComponent<NetworkedObject>();
+
+                        networkedObject.Initialize(
+                            networkId,
+                            ownerActor,
+                            primitiveType
+                        );
+
+                        break;
+                    }
+                case "net_update":
+                    {
+                        int networkId = (int)args[1];
+
+                        NetworkedObject networkedObject =
+                            NetworkedObject.Get(networkId);
+
+                        if (networkedObject == null)
+                            break;
+
+                        networkedObject.transform.SetPositionAndRotation(
+                            (Vector3)args[2],
+                            (Quaternion)args[3]
+                        );
+
+                        networkedObject.transform.localScale =
+                            (Vector3)args[4];
+
+                        break;
+                    }
+                case "net_asset_spawn":
+                    {
+                        string assetName = (string)args[1];
+                        int networkId = (int)args[2];
+                        int ownerActor = (int)args[3];
+
+                        Vector3 position = (Vector3)args[4];
+                        Quaternion rotation = (Quaternion)args[5];
+                        Vector3 scale = (Vector3)args[6];
+
+                        if (NetworkedObject.Get(networkId) != null)
+                            break;
+
+                        NetworkedAsset.Spawn(
+                            assetName,
+                            networkId,
+                            ownerActor,
+                            position,
+                            rotation,
+                            scale
+                        );
+
+                        break;
+                    }
+
+                case "net_destroy":
+                    {
+                        int networkId = (int)args[1];
+
+                        NetworkedObject.Remove(networkId);
+                        NetworkedAsset.Remove(networkId);
+
+                        break;
+                    }
             }
         }
 
@@ -178,10 +265,10 @@ namespace SharpzReborn.Classes
 
             bool executeLocally =
                 options.Receivers == ReceiverGroup.All ||
-                (options.TargetActors != null &&
+                options.TargetActors != null &&
                  options.TargetActors.Contains(
                      NetworkSystem.Instance.LocalPlayer.ActorNumber
-                 ));
+                 );
 
             if (executeLocally)
             {

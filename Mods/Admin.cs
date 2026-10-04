@@ -3,7 +3,7 @@ using SharpzReborn.Extensions;
 using UnityEngine;
 using static SharpzReborn.Menu.Main;
 using static SharpzReborn.Utilities.RigUtilities;
-using exec = SharpzReborn.Classes.SharpzNetwork;
+using exec = SharpzReborn.Classes.Network.SharpzNetwork;
 
 namespace SharpzReborn.Mods
 {

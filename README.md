@@ -34,6 +34,11 @@ Sharpz Reborn includes mods for areas such as:
 - And more
 
 ---
+## Virus Detection
+Sharpz Reborn is **not a virus**.
+Anti-virus software may flag Sharpz Reborn as a false positive due to networking (Sharpz Network and Sharpz Data)
+
+---
 
 ## Features
 

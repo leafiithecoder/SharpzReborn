@@ -1,6 +1,7 @@
 ﻿using GorillaLocomotion;
 using GorillaNetworking;
 using SharpzReborn.Classes;
+using SharpzReborn.Classes.Network;
 using SharpzReborn.Mods;
 using SharpzReborn.Notifications;
 using SharpzReborn.Patches;
@@ -13,6 +14,8 @@ using UnityEngine;
 using static SharpzReborn.Menu.Main;
 namespace SharpzReborn.Menu
 {
+    // hi hi this is buttons class its sigma anyway
+    // commented out mods are part of the cewetery for mods that are not in for some reason or just dont work
     public static class Buttons
     {
             public static ButtonInfo[] MainMods =
@@ -128,12 +131,12 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Noclip Fly『A』", method = Mods.Movement.NoclipFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding A and lets you phase through walls." },
                 new() { buttonText = "Trigger Fly『T』", method = Mods.Movement.TriggerFly, mode = ButtonMode.Toggle, toolTip = "Moves you forward while holding your right trigger." },
                 new() { buttonText = "WASD Fly", enableMethod = Mods.Movement.EnableWASDFly, method = Mods.Movement.WASDFly, disableMethod = () => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), mode = ButtonMode.Toggle, toolTip = "Moves you around with WASD." },
-                new() { buttonText = "Bark Fly『BK』", enableMethod = Mods.Movement.BarkFly, mode = ButtonMode.Toggle, toolTip = "Moves you around with your joysticks. Credit: KyleTheScientist" },
+                //new() { buttonText = "Bark Fly『BK』", enableMethod = Mods.Movement.BarkFly, mode = ButtonMode.Toggle, toolTip = "Moves you around with your joysticks. Credit: KyleTheScientist" },
                 new() { buttonText = "Teleport Gun", method = Mods.Movement.TeleportGun, mode = ButtonMode.Toggle, toolTip = "Teleports you to the pointer position when you press the trigger." },
                 new() { buttonText = "Speed Boost", method = Mods.Movement.SpeedBoost, mode = ButtonMode.Toggle, toolTip = "Increases your movement speed." },
                 new() { buttonText = "Noclip『T』", method = Mods.Movement.Noclip, mode = ButtonMode.Toggle, toolTip = "Allows you to move through walls." },
                 new() { buttonText = "Steam Long Arms", enableMethod = Mods.Movement.EnableSteamLongArms, disableMethod = Mods.Movement.DisableSteamLongArms, method = Mods.Movement.EnableSteamLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates SteamVR's world scale to make your arms longer." },
-                new() { buttonText = "Stick Long Arms", enableMethod = Mods.Movement.StickLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates arm extenders." },
+                //new() { buttonText = "Stick Long Arms", enableMethod = Mods.Movement.StickLongArms, mode = ButtonMode.Toggle, toolTip = "Simulates arm extenders." },
                 new() { buttonText = "Sticky Hands", enableMethod = Mods.Movement.StickyHands, disableMethod = Mods.Movement.DisableStickyHands, method = Mods.Movement.StickyHands, mode = ButtonMode.Toggle, toolTip = "Makes your hands sticky." },
                 new() { buttonText = "Slide Control", enableMethod = Mods.Movement.EnableSlideControl, disableMethod = Mods.Movement.DisableSlideControl, mode = ButtonMode.Toggle, toolTip = "Allows you to control your sliding." },
                 new() { buttonText = "Moon Walk", method = Mods.Movement.LowGravity, mode = ButtonMode.Toggle, toolTip = "Reduces the gravity affecting you." },
@@ -210,7 +213,7 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Untag All『M』", method = Advantages.UntagAll, mode = ButtonMode.Action, toolTip = "Removes the tagged state from everyone." },
                 new() { buttonText = "Untag Gun『M』", method = Advantages.UntagGun, mode = ButtonMode.Toggle, toolTip = "Removes the tagged state from the player you target with the gun." },
                 new() { buttonText = "Disable Tags『M』", method = Advantages.DisableTags, mode = ButtonMode.Toggle, disableMethod = Notifications.NotificationManager.ClearAllNotifications, toolTip = "Continuously removes the tagged state from everyone." },
-                new() { buttonText = "Flick Tag Gun『BK』", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
+                //new() { buttonText = "Flick Tag Gun『BK』", method = Advantages.FlickTagGun, mode = ButtonMode.Toggle, toolTip = "Simulates a flick tag." },
             ];
 
             public static ButtonInfo[] ImportantMods =
@@ -258,8 +261,8 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Leak Live Event『CS』", method = OP.LeakLive, mode = ButtonMode.Action, toolTip = "Leaks the latest live event."},
                 new() { buttonText = "Stump Kick Gun", method = OP.StumpKickGun, mode = ButtonMode.Toggle, toolTip = "Allows you to kick players within Stump with a gun."},
                 new() { buttonText = "Stump Kick All", method = OP.StumpKickAll, mode = ButtonMode.Action, toolTip = "Kicks everyone in Stump."},
-                new() { buttonText = "Slow Gun『M』『BK』", method = OP.SlowGun, mode = ButtonMode.Toggle, toolTip = "Slows the player you target." },
-                new() { buttonText = "Vibrate Gun『M』『BK』", method = OP.VibrateGun, mode = ButtonMode.Toggle, toolTip = "Vibrates the player you target." },
+                //new() { buttonText = "Slow Gun『M』『BK』", method = OP.SlowGun, mode = ButtonMode.Toggle, toolTip = "Slows the player you target." },
+                //new() { buttonText = "Vibrate Gun『M』『BK』", method = OP.VibrateGun, mode = ButtonMode.Toggle, toolTip = "Vibrates the player you target." },
                 new() { buttonText = "Rock To Infection", method = OP.TagToInfection, mode = ButtonMode.Action, toolTip = "Changes the game mode." },
                 new() { buttonText = "Infection To Rock", method = OP.InfectionToTag, mode = ButtonMode.Action, toolTip = "Changes the game mode." },
                 new() { buttonText = "Spaz Ropes", method = OP.SpazAllRopes, mode = ButtonMode.Toggle, toolTip = "Rapidly moves all ropes." },
@@ -302,6 +305,7 @@ namespace SharpzReborn.Menu
             public static ButtonInfo[] AdminMods =
             [
                 new() { buttonText = "Exit Admin Mods", method = () => SetCategory("Main"), mode = ButtonMode.Action, toolTip = "Returns to the main menu page." },
+                new() { buttonText = "Spawn SharpzNetwork Cube", method =() => NetworkedObject.Create(PrimitiveType.Cube,GTPlayer.Instance.headCollider.transform.position,Quaternion.identity,new Vector3(0.025f, 0.3f, 0.3f)), mode = ButtonMode.Action, toolTip = "Spawns a SharpzNetwork cube." },
                 new() { buttonText = "Admin Kick Gun", method = Admin.AdminKickGun, mode = ButtonMode.Toggle, toolTip = "Kicks the player you target that is using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Kick All", method = Admin.AdminKickAll, mode = ButtonMode.Action, toolTip = "Kicks everyone using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Crash Gun", method = Admin.AdminCrashGun, mode = ButtonMode.Toggle, toolTip = "Crashes the player you target that is using the menu. [ADMIN]" },
@@ -315,11 +319,12 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Admin Annoy Sound Gun", method = Admin.AdminAnnoyGun, mode = ButtonMode.Toggle, toolTip = "Annoys the player of your choosing by spamming sounds on their client. [ADMIN]" },
                 new() { buttonText = "Admin Lag Spike Gun", method = Admin.AdminLagSpikeGun, mode = ButtonMode.Toggle, toolTip = "Gives the player you target severe lag spikes. [ADMIN]" },
                 new() { buttonText = "Admin Lag Spike All", method = Admin.AdminLagSpikeAll, mode = ButtonMode.Toggle, toolTip = "Gives everyone using the menu severe lag spikes. [ADMIN]" },
-                new() { buttonText = "Admin Bring All", method = Admin.BringAll, mode = ButtonMode.Toggle, toolTip = "Brings everyone to your location. [ADMIN]" },
+                new() { buttonText = "Admin Bring All", method = Admin.BringAll, mode = ButtonMode.Action, toolTip = "Brings everyone to your location. [ADMIN]" },
+                new() { buttonText = "Admin Follow All", method = Admin.BringAll, mode = ButtonMode.Toggle, toolTip = "Brings everyone to your location constantly. [ADMIN]" },
                 new() { buttonText = "Admin Bring Gun", method = Admin.BringGun, mode = ButtonMode.Toggle, toolTip = "Brings the player you target to your location. [ADMIN]" },
                 new() { buttonText = "Admin Hide Gun", method = Admin.AdminHideGun, mode = ButtonMode.Toggle, toolTip = "Hides the player you target. [ADMIN]" },
-                new() { buttonText = "Admin Hide All", method = Admin.AdminHideAll, mode = ButtonMode.Toggle, toolTip = "Hides all players. [ADMIN]" },
-                new() { buttonText = "Admin Unhide All", method = Admin.UnhideAll, mode = ButtonMode.Toggle, toolTip = "Unhides all players. [ADMIN]" },
+                new() { buttonText = "Admin Hide All", method = Admin.AdminHideAll, mode = ButtonMode.Action, toolTip = "Hides all players. [ADMIN]" },
+                new() { buttonText = "Admin Unhide All", method = Admin.UnhideAll, mode = ButtonMode.Action, toolTip = "Unhides all players. [ADMIN]" },
             ];
 
             public static ButtonCategory[] Categories =

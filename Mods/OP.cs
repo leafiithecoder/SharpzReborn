@@ -20,7 +20,7 @@ using Random = UnityEngine.Random;
 using GorillaTag;
 using System;
 using GorillaTagScripts;
-using SharpzReborn.classes;
+using SharpzReborn.Classes;
 
 namespace SharpzReborn.Mods
 {
