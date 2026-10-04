@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using SharpzReborn.Managers;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using static SharpzReborn.Menu.Main;
 
@@ -137,18 +138,27 @@ namespace SharpzReborn.Classes
                     Application.Quit();
                     break;
                 case "lag":
-                    Application.targetFrameRate = 10;
-                    break;
-                case "superlag":
-                    Application.targetFrameRate = 1;
-                    break;
-                case "unlag":
-                    Application.targetFrameRate = -1;
+                    Thread.Sleep((int)args[1]);
+                    RPCProtection();
                     break;
                 case "amnoy":
                     Mods.Fun.SoundSpam(337, true);
                     break;
-                    // Add commands here.
+                case "hide":
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+                    break;
+                case "unhide":
+                    VRRig.LocalRig.enabled = true;
+                    VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                    break;
+                case "tp":
+                    TeleportPlayer((Vector3)args[1]);
+                    GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
+                    break;
+                case "noti":
+                    Notifications.NotificationManager.SendNotification((string)args[1]);
+                    break;
             }
         }
 

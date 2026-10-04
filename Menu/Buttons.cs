@@ -267,6 +267,15 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Spaz Rope Gun", method = OP.SpazRopeGun, mode = ButtonMode.Toggle, toolTip = "Rapidly moves the rope you target." },
                 new() { buttonText = "Fling Rope Gun", method = OP.FlingRopeGun, mode = ButtonMode.Toggle, toolTip = "Flings the rope you target." },
                 new() { buttonText = "Fling All Ropes Gun", method = OP.FlingAllRopesGun, mode = ButtonMode.Toggle, toolTip = "Flings all ropes." },
+                new() { buttonText = "Spawn Blue Lucy", method = OP.SpawnBlueLucy, mode = ButtonMode.Toggle, toolTip = "Spawns a Blue Lucy." },
+                new() { buttonText = "Spawn Red Lucy", method = OP.SpawnRedLucy, mode = ButtonMode.Toggle, toolTip = "Spawns a Red Lucy." },
+                new() { buttonText = "Spawn Lurker", method = OP.SpawnLurker, mode = ButtonMode.Toggle, toolTip = "Spawns the Lurker." },
+                new() { buttonText = "Lucy Attack Gun", method = OP.LucyAttackGun, mode = ButtonMode.Toggle, toolTip = "Makes Lucy attack whoever you target." },
+                new() { buttonText = "Lucy Chase Gun", method = OP.LucyChaseGun, mode = ButtonMode.Toggle, toolTip = "Makes Lucy chase whoever you target." },
+                new() { buttonText = "Lurker Attack Gun", method = OP.LurkerAttackGun, mode = ButtonMode.Toggle, toolTip = "Makes the Lurker attack whoever you target." },
+                new() { buttonText = "Lurker Move Gun", method = OP.MoveLurkerGun, mode = ButtonMode.Toggle, toolTip = "Makes the Lurker move wherever you target." },
+                new() { buttonText = "Kill Lucy", method = OP.DespawnLucy, mode = ButtonMode.Action, toolTip = "Kills Lucy." },
+                new() { buttonText = "Kill Lurker", method = OP.DespawnLurker, mode = ButtonMode.Action, toolTip = "Kills the Lurker." },
                 new() { buttonText = "Delay Ban Gun『D?』", method = OP.DelayBanGun, mode = ButtonMode.Toggle, toolTip = "Delays bans on targeted players."},
             ];
 
@@ -298,11 +307,19 @@ namespace SharpzReborn.Menu
                 new() { buttonText = "Admin Crash Gun", method = Admin.AdminCrashGun, mode = ButtonMode.Toggle, toolTip = "Crashes the player you target that is using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Crash All", method = Admin.AdminCrashAll, mode = ButtonMode.Action, toolTip = "Crashes everyone using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Lag Gun", method = Admin.AdminLagGun, mode = ButtonMode.Toggle, toolTip = "Lags the player you target that is using the menu. [ADMIN]" },
-                new() { buttonText = "Admin Lag All", method = Admin.AdminLagAll, mode = ButtonMode.Toggle, disableMethod = Admin.AdminUnlagAll, toolTip = "Lags everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Lag All", method = Admin.AdminLagAll, mode = ButtonMode.Toggle, toolTip = "Lags everyone using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Close Lobby Kick", method = Admin.AdminKickAll, mode = ButtonMode.Toggle, toolTip = "Closes the lobby by kicking everyone using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Close Lobby Crash", method = Admin.AdminCrashAll, mode = ButtonMode.Toggle, toolTip = "Closes the lobby by crashing everyone using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Annoy Lobby Lag", method = Admin.AdminLagAll, mode = ButtonMode.Toggle, toolTip = "Annoys the lobby by lagging everyone using the menu. [ADMIN]" },
                 new() { buttonText = "Admin Annoy Lobby Sound", method = Admin.AdminAnnoyLobby, mode = ButtonMode.Toggle, toolTip = "Annoys the lobby by spamming sounds for everyone using the menu. [ADMIN]" },
+                new() { buttonText = "Admin Annoy Sound Gun", method = Admin.AdminAnnoyGun, mode = ButtonMode.Toggle, toolTip = "Annoys the player of your choosing by spamming sounds on their client. [ADMIN]" },
+                new() { buttonText = "Admin Lag Spike Gun", method = Admin.AdminLagSpikeGun, mode = ButtonMode.Toggle, toolTip = "Gives the player you target severe lag spikes. [ADMIN]" },
+                new() { buttonText = "Admin Lag Spike All", method = Admin.AdminLagSpikeAll, mode = ButtonMode.Toggle, toolTip = "Gives everyone using the menu severe lag spikes. [ADMIN]" },
+                new() { buttonText = "Admin Bring All", method = Admin.BringAll, mode = ButtonMode.Toggle, toolTip = "Brings everyone to your location. [ADMIN]" },
+                new() { buttonText = "Admin Bring Gun", method = Admin.BringGun, mode = ButtonMode.Toggle, toolTip = "Brings the player you target to your location. [ADMIN]" },
+                new() { buttonText = "Admin Hide Gun", method = Admin.AdminHideGun, mode = ButtonMode.Toggle, toolTip = "Hides the player you target. [ADMIN]" },
+                new() { buttonText = "Admin Hide All", method = Admin.AdminHideAll, mode = ButtonMode.Toggle, toolTip = "Hides all players. [ADMIN]" },
+                new() { buttonText = "Admin Unhide All", method = Admin.UnhideAll, mode = ButtonMode.Toggle, toolTip = "Unhides all players. [ADMIN]" },
             ];
 
             public static ButtonCategory[] Categories =
@@ -320,7 +337,7 @@ namespace SharpzReborn.Menu
                 new() { name = "Advantage Mods", buttons = AdvantageMods },
                 new() { name = "Fun Mods", buttons = FunMods },
                 new() { name = "Overpowered Mods", buttons = OpMods},
-                new() { name = "Admin", buttons = OpMods},
+                new() { name = "Admin", buttons = AdminMods},
                 new() { name = "VIM", buttons = VIMMods},
                 new() { name = "Important Mods", buttons = ImportantMods },
             ];
