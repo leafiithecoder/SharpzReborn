@@ -4,6 +4,9 @@
 
 **A feature-packed, powerful open-source Gorilla Tag mod menu.**
 
+<a href="https://discord.gg/wbxfF7KTF3">
+  <img src="https://img.shields.io/discord/1551313051276550316?style=for-the-badge&logo=discord&logoColor=white&color=blueviolet&link=https%3A%2F%2Fdiscord.gg%2FwbxfF7KTF3" alt="Join Discord">
+</a>
 <a href="https://github.com/leafiithecoder/SharpzReborn/releases/latest/download/SharpzReborn.dll">
   <img src="https://img.shields.io/github/downloads/leafiithecoder/SharpzReborn/latest/total?sort=date&style=for-the-badge&logo=github&logoColor=white&label=download&color=green&link=https%3A%2F%2Fgithub.com%2Fleafiithecoder%2FSharpzReborn%2Freleases%2Flatest%2Fdownload%2FSharpzReborn.dll" alt="Download">
 </a>
